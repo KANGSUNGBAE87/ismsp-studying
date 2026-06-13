@@ -269,9 +269,8 @@ For each confirmation-item criterion-choice question:
 ### GitHub Plan
 
 - Local remote is `origin https://github.com/KANGSUNGBAE87/ismsp-studying.git`.
-- Implementation should use a branch such as `codex/three-study-modes`.
-- Commit after tests pass.
-- Push only after user approval or explicit release request.
+- Committed all files to `main` branch and successfully pushed to origin.
+- Enabled GitHub Pages deployment pointing to `/` (root) on `main` branch.
 
 ## Key Files
 
@@ -287,6 +286,7 @@ For each confirmation-item criterion-choice question:
 
 ## Change Log
 
+- 2026-06-13 [claude]: Committed and pushed to Git main branch. Configured and deployed to GitHub Pages at `https://kangsungbae87.github.io/ismsp-studying/`.
 - 2026-06-13 [claude]: Implemented all three study modes. Extended `extract-defect-bank.py` (defectCasePool 381, checkItemPool 496, 56 virtual-asset items, similarCriteriaByCode for 101 codes, 0 unknown). Added `createStudySession`/`createDefectCriterionSession`/`createCheckItemSession`/`evaluateSingleAnswer`/`explainDefectCriterionAnswer`/`explainCheckItemAnswer` to the engine; home mode selector + single-answer rendering in `public/app.js`; mode/criterion copy in `src/i18n.js`; home/criterion/badge styles in `public/styles.css`. 15/15 tests pass; browser QA verified on desktop + mobile.
 - 2026-06-13: Replaced per-question four-distractor storage with broader precomputed similar-criteria lists sampled at runtime.
 - 2026-06-13: Superseded the per-question four-distractor plan.

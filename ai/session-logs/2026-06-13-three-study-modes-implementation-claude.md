@@ -55,12 +55,11 @@ Actor: claude
 - Question/body text stays Korean in English UI (by design; prompts/labels localized).
 - `1.5 확인(금융)` finance variant not yet a separate mode.
 - Local/static only; no backend, login, sync, ads, IAP, or native shell.
-- Not committed/pushed (repo still has 0 commits; awaiting user approval to commit).
 
 ## Next Steps
 
-- Optional: finance-variant mode/badge; commit + push when the user approves.
-- Refresh project Graphify after this feature (`graphify update . --no-cluster`).
+- Monitor GitHub Pages deployment progress and verify the live URL.
+- Optional: finance-variant mode/badge.
 
 ## Knowledge Store Promotion
 
