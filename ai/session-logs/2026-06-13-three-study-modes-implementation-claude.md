@@ -58,8 +58,15 @@ Actor: claude
 
 ## Next Steps
 
-- Monitor GitHub Pages deployment progress and verify the live URL.
 - Optional: finance-variant mode/badge.
+
+## Deployment (verified 2026-06-13)
+
+- Committed + pushed to `KANGSUNGBAE87/ismsp-studying` (main); `.gitignore` keeps
+  `graphify-out/` and UA generated files out of the repo.
+- GitHub Pages built and live: https://kangsungbae87.github.io/ismsp-studying/
+- Verified live: index.html, `public/app.js`, and the data JSON all return HTTP 200;
+  live data carries checkItemPool 496 / defectCasePool 381 / 56 virtual-asset items.
 
 ## Knowledge Store Promotion
 
