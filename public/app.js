@@ -1,4 +1,5 @@
 import {
+  DEFAULT_SESSION_COUNT,
   STUDY_MODES,
   buildWeakAreaSummary,
   createStudySession,
@@ -13,23 +14,29 @@ import { t, languages } from "../src/i18n.js";
 import { createBrowserPlatform } from "../src/platform/adapters.js";
 
 const platform = createBrowserPlatform();
+const SESSION_SIZE_OPTIONS = [DEFAULT_SESSION_COUNT];
 const state = {
   bank: null,
   screen: "home",
-  mode: STUDY_MODES.DEFECT_JUDGMENT,
+  mode: STUDY_MODES.DEFECT_JUDGMENT_INCORRECT,
   session: null,
   currentIndex: 0,
   answers: {},
   checked: {},
   locale: platform.storage.get("locale", platform.locale.defaultLocale()),
-  sessionSize: platform.storage.get("sessionSize", 50),
+  sessionSize: normalizeSessionSize(platform.storage.get("sessionSize", DEFAULT_SESSION_COUNT)),
 };
 
 const MODES = [
   {
-    mode: STUDY_MODES.DEFECT_JUDGMENT,
-    titleKey: "modeDefectJudgment",
-    descKey: "modeDefectJudgmentDesc",
+    mode: STUDY_MODES.DEFECT_JUDGMENT_INCORRECT,
+    titleKey: "modeDefectJudgmentIncorrect",
+    descKey: "modeDefectJudgmentIncorrectDesc",
+  },
+  {
+    mode: STUDY_MODES.DEFECT_JUDGMENT_CORRECT,
+    titleKey: "modeDefectJudgmentCorrect",
+    descKey: "modeDefectJudgmentCorrectDesc",
   },
   {
     mode: STUDY_MODES.DEFECT_CRITERION,
@@ -46,9 +53,16 @@ init();
 async function init() {
   renderLoading();
   try {
-    const response = await fetch(new URL("./data/ismsp-defect-bank.json", import.meta.url));
-    if (!response.ok) throw new Error(`Question bank request failed: ${response.status}`);
-    state.bank = await response.json();
+    const [bankResponse, graphResponse] = await Promise.all([
+      fetch(new URL("./data/ismsp-defect-bank.json", import.meta.url)),
+      fetch(new URL("./data/wrongnote-graph.json", import.meta.url)),
+    ]);
+    if (!bankResponse.ok) throw new Error(`Question bank request failed: ${bankResponse.status}`);
+    if (!graphResponse.ok) throw new Error(`Wrong-note graph request failed: ${graphResponse.status}`);
+    state.bank = {
+      ...(await bankResponse.json()),
+      wrongnoteGraph: await graphResponse.json(),
+    };
     renderHome();
   } catch (error) {
     renderError(error);
@@ -57,7 +71,7 @@ async function init() {
 
 function startSession(mode, count) {
   state.mode = mode;
-  state.sessionSize = Number(count ?? state.sessionSize);
+  state.sessionSize = normalizeSessionSize(count ?? state.sessionSize);
   platform.storage.set("sessionSize", state.sessionSize);
   state.session = createStudySession(state.bank, {
     mode,
@@ -125,7 +139,7 @@ function renderHomeControls() {
       <label>
         <span>${t(state.locale, "sessionSize")}</span>
         <select data-control="session-size">
-          ${[10, 25, 50].map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
+          ${SESSION_SIZE_OPTIONS.map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
         </select>
       </label>
       <label>
@@ -147,7 +161,12 @@ function render() {
   const checked = Boolean(state.checked[question.id]);
   const selectedIds = state.answers[question.id] ?? [];
   const result = checked ? evaluateQuestion(question, selectedIds) : null;
-  const selectLabel = question.type === "single" ? t(state.locale, "selectOne") : t(state.locale, "selectTwo");
+  const selectLabel =
+    question.presentation === "judgment"
+      ? t(state.locale, "selectOneJudgment")
+      : question.type === "single"
+        ? t(state.locale, "selectOne")
+        : t(state.locale, "selectTwo");
 
   app.innerHTML = `
     <main class="app-shell">
@@ -163,17 +182,16 @@ function render() {
           <span>${t(state.locale, "question")} ${question.number} / ${state.session.questionCount}</span>
           <span>${selectLabel}</span>
         </div>
+        ${renderMobileQuestionNav()}
         <h1>${escapeHtml(questionPrompt(question))}</h1>
         ${renderQuestionBody(question)}
         <div class="options">
           ${question.options.map((option) => renderOption(question, option, selectedIds, checked)).join("")}
         </div>
-        <div class="action-row">
-          <button class="secondary" data-action="previous">${t(state.locale, "previousQuestion")}</button>
-          <button class="primary" data-action="check">${t(state.locale, "checkAnswer")}</button>
-          <button class="secondary" data-action="next">${t(state.locale, "nextQuestion")}</button>
-        </div>
         ${renderStatus(question, result)}
+        <div class="quiz-footer-slot">
+          ${renderQuizFooter()}
+        </div>
       </section>
 
       <aside class="review-panel">
@@ -208,7 +226,7 @@ function renderControls() {
       <label>
         <span>${t(state.locale, "sessionSize")}</span>
         <select data-control="session-size">
-          ${[10, 25, 50].map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
+          ${SESSION_SIZE_OPTIONS.map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
         </select>
       </label>
       <label>
@@ -237,27 +255,41 @@ function renderStats(stats) {
 
 function renderQuestionNav() {
   return `
-    <section>
+    <section class="question-nav-section">
       <h3>${t(state.locale, "questionNav")}</h3>
       <div class="question-nav">
-        ${state.session.questions
-          .map((question, index) => {
-            const answer = state.answers[question.id] ?? [];
-            const checked = Boolean(state.checked[question.id]);
-            const result = checked ? evaluateQuestion(question, answer) : null;
-            const statusClass = result?.isCorrect
-              ? "correct"
-              : checked
-                ? "wrong"
-                : answer.length
-                  ? "selected"
-                  : "";
-            return `<button class="${index === state.currentIndex ? "active" : ""} ${statusClass}" data-jump="${index}">${question.number}</button>`;
-          })
-          .join("")}
+        ${renderQuestionNavButtons()}
       </div>
     </section>
   `;
+}
+
+function renderMobileQuestionNav() {
+  return `
+    <nav class="mobile-question-nav" aria-label="${escapeAttribute(t(state.locale, "questionNav"))}">
+      <div class="question-nav">
+        ${renderQuestionNavButtons()}
+      </div>
+    </nav>
+  `;
+}
+
+function renderQuestionNavButtons() {
+  return state.session.questions
+    .map((question, index) => {
+      const answer = state.answers[question.id] ?? [];
+      const checked = Boolean(state.checked[question.id]);
+      const result = checked ? evaluateQuestion(question, answer) : null;
+      const statusClass = result?.isCorrect
+        ? "correct"
+        : checked
+          ? "wrong"
+          : answer.length
+            ? "selected"
+            : "";
+      return `<button class="${index === state.currentIndex ? "active" : ""} ${statusClass}" data-jump="${index}">${question.number}</button>`;
+    })
+    .join("");
 }
 
 function renderQuestionBody(question) {
@@ -278,18 +310,20 @@ function renderQuestionBody(question) {
 }
 
 function renderOption(question, option, selectedIds, checked) {
+  if (question.presentation === "judgment") return renderJudgmentOption(question, option, selectedIds, checked);
   if (question.type === "single") return renderCriterionOption(option, selectedIds, checked);
-  return renderJudgmentOption(option, selectedIds, checked);
+  return renderJudgmentOption(question, option, selectedIds, checked);
 }
 
-function renderJudgmentOption(option, selectedIds, checked) {
+function renderJudgmentOption(question, option, selectedIds, checked) {
   const selected = selectedIds.includes(option.id);
+  const answerOption = isAnswerOption(question, option);
   const explanation = checked && !option.isCorrect ? explainIncorrectOption(option, state.bank) : null;
   const buttonClasses = [
     "option-button",
     selected ? "selected" : "",
-    checked && option.isCorrect ? "is-correct" : "",
-    checked && selected && !option.isCorrect ? "is-wrong" : "",
+    checked && answerOption ? "is-correct" : "",
+    checked && selected && !answerOption ? "is-wrong" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -336,9 +370,12 @@ function renderOptionExplanation(explanation) {
         <span>${escapeHtml(matchTypeLabel(explanation.matchType))}</span>
       </div>
       <p>${escapeHtml(explanation.summary)}</p>
-      <ul>
-        ${explanation.details.map((detail) => `<li>${escapeHtml(detail)}</li>`).join("")}
-      </ul>
+      <details class="option-explanation-details">
+        <summary>${t(state.locale, "detailEvidence")}</summary>
+        <ul>
+          ${explanation.details.map((detail) => `<li>${escapeHtml(detail)}</li>`).join("")}
+        </ul>
+      </details>
     </section>
   `;
 }
@@ -369,6 +406,16 @@ function renderReview(question, checked, selectedIds) {
   }
 
   if (question.type === "single") {
+    if (question.presentation === "judgment") {
+      return `
+        <section class="review-card">
+          <h3>${t(state.locale, "answerExplanation")}</h3>
+          ${renderSingleJudgmentAnswerSummary(question, selectedIds)}
+          <p>${t(state.locale, "inlineExplanationInfo")}</p>
+        </section>
+      `;
+    }
+
     const explain =
       question.mode === STUDY_MODES.CHECK_ITEM ? explainCheckItemAnswer : explainDefectCriterionAnswer;
     const explanation = explain(question, selectedIds[0] ?? null, state.bank);
@@ -385,7 +432,8 @@ function renderReview(question, checked, selectedIds) {
 
   return `
     <section class="review-card">
-      <h3>${t(state.locale, "explanation")}</h3>
+      <h3>${t(state.locale, "answerExplanation")}</h3>
+      ${renderJudgmentAnswerSummary(question, selectedIds)}
       <p>${t(state.locale, "inlineExplanationInfo")}</p>
     </section>
   `;
@@ -426,6 +474,16 @@ function renderBankMeta() {
   `;
 }
 
+function renderQuizFooter() {
+  return `
+    <div class="action-row">
+      <button class="secondary" data-action="previous">${t(state.locale, "previousQuestion")}</button>
+      <button class="primary" data-action="check">${t(state.locale, "checkAnswer")}</button>
+      <button class="secondary" data-action="next">${t(state.locale, "nextQuestion")}</button>
+    </div>
+  `;
+}
+
 function wireHomeEvents() {
   document.querySelectorAll("[data-mode]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -448,6 +506,12 @@ function wireQuizEvents() {
     state.checked[question.id] = true;
     platform.haptics.impact();
     render();
+    setTimeout(() => {
+      const statusEl = document.querySelector(".status-line");
+      if (statusEl) {
+        statusEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }, 50);
   });
   document.querySelector('[data-action="next"]')?.addEventListener("click", () => {
     state.currentIndex = Math.min(state.currentIndex + 1, state.session.questions.length - 1);
@@ -473,7 +537,7 @@ function wireQuizEvents() {
 
 function wireSharedControls() {
   document.querySelector('[data-control="session-size"]')?.addEventListener("change", (event) => {
-    state.sessionSize = Number(event.target.value);
+    state.sessionSize = normalizeSessionSize(event.target.value);
     platform.storage.set("sessionSize", state.sessionSize);
     if (state.screen === "quiz") startSession(state.mode, state.sessionSize);
   });
@@ -511,7 +575,61 @@ function evaluateQuestion(question, selectedIds) {
   return evaluateAnswer(question, selectedIds);
 }
 
+function renderJudgmentAnswerSummary(question, selectedIds) {
+  const result = evaluateAnswer(question, selectedIds);
+  const selectedOptions = optionsByIds(question, selectedIds);
+  const answerOptions = question.options.filter((option) => isAnswerOption(question, option));
+  const selectedLabel = optionListLabel(selectedOptions);
+  const answerLabel = optionListLabel(answerOptions);
+
+  if (result.isCorrect) {
+    return `<p class="explain-correct">${t(state.locale, "selectedOptions")}: ${escapeHtml(selectedLabel)}. ${t(
+      state.locale,
+      "correct",
+    )}.</p>`;
+  }
+
+  return `
+    <p class="explain-wrong">${t(state.locale, "selectedOptions")}: ${escapeHtml(selectedLabel)}</p>
+    <p>${t(state.locale, "correctOptions")}: ${escapeHtml(answerLabel)}</p>
+  `;
+}
+
+function renderSingleJudgmentAnswerSummary(question, selectedIds) {
+  const result = evaluateSingleAnswer(question, selectedIds[0] ?? null);
+  const selectedOptions = optionsByIds(question, selectedIds);
+  const answerOptions = question.options.filter((option) => isAnswerOption(question, option));
+  const selectedLabel = optionListLabel(selectedOptions);
+  const answerLabel = optionListLabel(answerOptions);
+
+  if (result.isCorrect) {
+    return `<p class="explain-correct">${t(state.locale, "selectedOptions")}: ${escapeHtml(selectedLabel)}. ${t(
+      state.locale,
+      "correct",
+    )}.</p>`;
+  }
+
+  return `
+    <p class="explain-wrong">${t(state.locale, "selectedOptions")}: ${escapeHtml(selectedLabel)}</p>
+    <p>${t(state.locale, "correctOptions")}: ${escapeHtml(answerLabel)}</p>
+  `;
+}
+
+function optionsByIds(question, ids) {
+  const optionsById = new Map(question.options.map((option) => [option.id, option]));
+  return ids.map((id) => optionsById.get(id)).filter(Boolean);
+}
+
+function optionListLabel(options) {
+  return options.length ? options.map((option) => option.label).join(", ") : "없음";
+}
+
+function isAnswerOption(question, option) {
+  return question.answerTarget === "incorrect" ? !option.isCorrect : Boolean(option.isCorrect);
+}
+
 function questionPrompt(question) {
+  if (question.presentation === "judgment") return question.prompt;
   if (question.type === "single") {
     return question.mode === STUDY_MODES.CHECK_ITEM
       ? t(state.locale, "checkItemPrompt")
@@ -531,6 +649,7 @@ function optionHtml(value, label, selected) {
 function matchTypeLabel(matchType) {
   if (matchType === "exact") return t(state.locale, "exactOriginal");
   if (matchType === "similar") return t(state.locale, "similarOriginal");
+  if (matchType === "criteria-scope") return t(state.locale, "criteriaScope");
   return t(state.locale, "missingOriginal");
 }
 
@@ -545,4 +664,9 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+function normalizeSessionSize(value) {
+  const parsed = Number.parseInt(value, 10);
+  return SESSION_SIZE_OPTIONS.includes(parsed) ? parsed : DEFAULT_SESSION_COUNT;
 }

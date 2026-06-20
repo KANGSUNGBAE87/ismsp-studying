@@ -1,14 +1,89 @@
 const DEFAULT_PROMPT_KO =
-  "ISMS-P 인증심사에서 다음 결함사례에 대한 심사원의 판단으로 옳은 것을 모두 고르시오. (2개)";
+  "ISMS-P 인증심사에서 다음 결함사례에 대한 심사원의 판단으로 틀린 것을 모두 고르시오. (2개)";
+
+export const DEFAULT_SESSION_COUNT = 10;
 
 export const STUDY_MODES = {
   DEFECT_JUDGMENT: "defect-judgment",
+  DEFECT_JUDGMENT_CORRECT: "defect-judgment-correct",
+  DEFECT_JUDGMENT_INCORRECT: "defect-judgment-incorrect",
   DEFECT_CRITERION: "defect-criterion",
   CHECK_ITEM: "check-item",
 };
 
 const DEFECT_CRITERION_PROMPT_KO = "다음 결함사례는 어떤 ISMS-P 인증기준 결함에 해당하나요?";
 const CHECK_ITEM_PROMPT_KO = "다음 확인사항은 어떤 ISMS-P 인증기준에 해당하나요?";
+const DEFECT_JUDGMENT_CORRECT_PROMPT_KO = "다음 결함사례에 대한 올바른 심사원 판단을 고르시오.";
+const DEFECT_JUDGMENT_INCORRECT_PROMPT_KO = "다음 결함사례에 대한 틀린 심사원 판단을 고르시오.";
+const DOMAIN_STOPWORDS = new Set([
+  "경우",
+  "해당",
+  "결함",
+  "기준",
+  "관리",
+  "절차",
+  "수립",
+  "운영",
+  "대한",
+  "관한",
+  "방법",
+  "대상",
+  "주기",
+  "담당자",
+  "세부",
+  "정보보호",
+  "개인정보",
+  "시스템",
+  "주요",
+  "일부",
+  "등이",
+  "또는",
+  "있는가",
+  "있으나",
+  "있지",
+  "하지",
+  "않은",
+  "않아",
+  "한다",
+  "정하고",
+  "결과",
+  "보고",
+  "문제점",
+  "점검",
+  "조치",
+]);
+const GENERIC_SCOPE_ROOTS = [
+  "수립",
+  "수행",
+  "이행",
+  "절차",
+  "기준",
+  "관리",
+  "정기",
+  "확인",
+  "문제점",
+  "대책",
+  "결과",
+  "보고",
+];
+const ANCHOR_STOPWORDS = new Set([
+  ...DOMAIN_STOPWORDS,
+  "보안",
+  "보호",
+  "관리",
+  "처리",
+  "접근",
+  "통제",
+  "적용",
+  "검토",
+  "점검",
+  "조치",
+  "제한",
+  "공개",
+  "운영",
+  "개선",
+  "보장",
+]);
 
 export function createSeededRandom(seed = Date.now()) {
   let state = Number(seed) >>> 0;
@@ -24,12 +99,12 @@ export function createSeededRandom(seed = Date.now()) {
 }
 
 export function normalizeCount(count, bank) {
-  const trueCapacity = Math.floor((bank.truePool?.length ?? 0) / 2);
-  const falseCapacity = Math.floor((bank.falsePool?.length ?? 0) / 3);
+  const trueCapacity = Math.floor((bank.truePool?.length ?? 0) / 3);
+  const falseCapacity = bank.truePool?.length ?? 0;
   const maxCount = Math.max(0, Math.min(trueCapacity, falseCapacity));
   const parsed = Number.parseInt(count, 10);
 
-  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(50, maxCount);
+  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(DEFAULT_SESSION_COUNT, maxCount);
   return Math.min(parsed, maxCount);
 }
 
@@ -37,41 +112,18 @@ export function createSession(bank, options = {}) {
   validateBank(bank);
 
   const random = createSeededRandom(options.seed ?? Date.now());
-  const count = normalizeCount(options.count ?? 50, bank);
-  const falsePool = shuffle(bank.falsePool, random);
+  const falsePool = shuffle(buildRuntimeFalsePool(bank), random);
+  const count = Math.min(normalizeCount(options.count ?? DEFAULT_SESSION_COUNT, bank), Math.floor(falsePool.length / 2));
   const truePool = shuffle(bank.truePool, random);
-  const questions = [];
-
-  for (let index = 0; index < count; index += 1) {
-    const falseOptions = falsePool.slice(index * 3, index * 3 + 3);
-    const trueOptions = truePool.slice(index * 2, index * 2 + 2);
-    const optionsForQuestion = shuffle([...falseOptions, ...trueOptions], random).map(
-      (option, optionIndex) => ({
-        id: option.id,
-        label: `${optionIndex + 1})`,
-        statement: option.statement,
-        criteriaCode: option.criteriaCode,
-        criteriaName: option.criteriaName,
-        defectCase: option.defectCase,
-        isCorrect: Boolean(option.isCorrect),
-      }),
-    );
-
-    questions.push({
-      id: `q-${index + 1}`,
-      number: index + 1,
-      type: "multi",
-      mode: STUDY_MODES.DEFECT_JUDGMENT,
-      prompt: DEFAULT_PROMPT_KO,
-      options: optionsForQuestion,
-    });
-  }
+  const questions = buildDefectJudgmentQuestions(falsePool, truePool, count, random);
 
   return makeSession(STUDY_MODES.DEFECT_JUDGMENT, questions, random);
 }
 
 export function createStudySession(bank, options = {}) {
-  const mode = options.mode ?? STUDY_MODES.DEFECT_JUDGMENT;
+  const mode = options.mode ?? STUDY_MODES.DEFECT_JUDGMENT_INCORRECT;
+  if (mode === STUDY_MODES.DEFECT_JUDGMENT_CORRECT) return createDefectJudgmentCorrectSession(bank, options);
+  if (mode === STUDY_MODES.DEFECT_JUDGMENT_INCORRECT) return createDefectJudgmentIncorrectSession(bank, options);
   if (mode === STUDY_MODES.DEFECT_CRITERION) return createDefectCriterionSession(bank, options);
   if (mode === STUDY_MODES.CHECK_ITEM) return createCheckItemSession(bank, options);
   return createDefectJudgmentSession(bank, options);
@@ -82,12 +134,48 @@ export function createDefectJudgmentSession(bank, options = {}) {
   return createSession(bank, options);
 }
 
+export function createWeakDefectJudgmentSession(bank, personalization = {}, options = {}) {
+  validateBank(bank);
+
+  const random = createSeededRandom(options.seed ?? Date.now());
+  const count = normalizeCount(options.count ?? DEFAULT_SESSION_COUNT, bank);
+  const weakCriteriaCodes = rankWeakCriteriaCodes(personalization.criteriaSummary);
+  const falsePool = prioritizeWeakFalsePool(bank, weakCriteriaCodes, random);
+  const truePool = prioritizeWeakTruePool(bank, weakCriteriaCodes, random);
+  const safeCount = Math.min(count, Math.floor(falsePool.length / 2));
+  const questions = buildDefectJudgmentQuestions(falsePool, truePool, safeCount, random, {
+    personalized: true,
+    weakCriteriaCodes,
+  });
+  const session = makeSession(STUDY_MODES.DEFECT_JUDGMENT, questions, random);
+  session.hiddenFeature = "weak-problem-review";
+  return session;
+}
+
+export function createDefectJudgmentCorrectSession(bank, options = {}) {
+  return createBinaryDefectJudgmentSession(bank, {
+    ...options,
+    mode: STUDY_MODES.DEFECT_JUDGMENT_CORRECT,
+    answerTarget: "correct",
+    promptKo: DEFECT_JUDGMENT_CORRECT_PROMPT_KO,
+  });
+}
+
+export function createDefectJudgmentIncorrectSession(bank, options = {}) {
+  return createBinaryDefectJudgmentSession(bank, {
+    ...options,
+    mode: STUDY_MODES.DEFECT_JUDGMENT_INCORRECT,
+    answerTarget: "incorrect",
+    promptKo: DEFECT_JUDGMENT_INCORRECT_PROMPT_KO,
+  });
+}
+
 export function createDefectCriterionSession(bank, options = {}) {
   validateCriterionBank(bank, "defectCasePool");
 
   const random = createSeededRandom(options.seed ?? Date.now());
   const pool = shuffle(bank.defectCasePool, random);
-  const count = clampCount(options.count ?? 50, pool.length);
+  const count = clampCount(options.count ?? DEFAULT_SESSION_COUNT, pool.length);
 
   const questions = pool.slice(0, count).map((item, index) =>
     buildCriterionQuestion(bank, random, {
@@ -109,7 +197,7 @@ export function createCheckItemSession(bank, options = {}) {
 
   const random = createSeededRandom(options.seed ?? Date.now());
   const pool = shuffle(bank.checkItemPool, random);
-  const count = clampCount(options.count ?? 50, pool.length);
+  const count = clampCount(options.count ?? DEFAULT_SESSION_COUNT, pool.length);
 
   const questions = pool.slice(0, count).map((item, index) =>
     buildCriterionQuestion(bank, random, {
@@ -133,7 +221,7 @@ export function createCheckItemSession(bank, options = {}) {
 
 export function evaluateSingleAnswer(question, selectedOptionId) {
   const id = Array.isArray(selectedOptionId) ? selectedOptionId[0] : selectedOptionId;
-  const correct = question.options.find((option) => option.isCorrect) ?? null;
+  const correct = question.options.find((option) => isTargetOption(question, option)) ?? null;
 
   if (id === null || id === undefined || id === "") {
     return { status: "incomplete", isCorrect: false, correctOptionId: correct?.id ?? null };
@@ -159,7 +247,7 @@ export function explainCheckItemAnswer(question, selectedOptionId, bank) {
 export function evaluateAnswer(question, selectedOptionIds) {
   const selected = new Set(selectedOptionIds);
   const correct = new Set(
-    question.options.filter((option) => option.isCorrect).map((option) => option.id),
+    question.options.filter((option) => isTargetOption(question, option)).map((option) => option.id),
   );
 
   if (selected.size < correct.size) {
@@ -186,6 +274,8 @@ export function evaluateAnswer(question, selectedOptionIds) {
     isCorrect,
     selectedCount: selected.size,
     correctCount: correct.size,
+    selectedOptionIds: [...selected],
+    correctOptionIds: [...correct],
   };
 }
 
@@ -215,7 +305,7 @@ export function buildWeakAreaSummary(questions, answersByQuestionId) {
     const answer = answersByQuestionId[question.id] ?? [];
     if (isAnswerEmpty(answer) || isQuestionCorrect(question, answer)) continue;
 
-    for (const option of question.options.filter((item) => item.isCorrect)) {
+    for (const option of question.options.filter((item) => isTargetOption(question, item))) {
       const key = option.criteriaCode ?? option.code;
       const current = weakMap.get(key) ?? {
         code: key,
@@ -228,6 +318,10 @@ export function buildWeakAreaSummary(questions, answersByQuestionId) {
   }
 
   return [...weakMap.values()].sort((a, b) => b.misses - a.misses || a.code.localeCompare(b.code));
+}
+
+export function isTargetOption(question, option) {
+  return question.answerTarget === "incorrect" ? !option.isCorrect : Boolean(option.isCorrect);
 }
 
 function isAnswerEmpty(answer) {
@@ -250,20 +344,18 @@ export function explainIncorrectOption(option, bank) {
   const original = exactMatch ?? similarMatch;
 
   if (!original) {
+    const details = [];
+    appendCriteriaScopeDetails(details, bank, option.criteriaCode, formatCriteria(option));
+
     return {
-      matchType: "none",
+      matchType: "criteria-scope",
       confidence: 0,
       wrongCriteriaCode: option.criteriaCode,
       wrongCriteriaName: option.criteriaName,
-      summary:
-        "이 조합은 문제은행에서 오답 후보로 생성된 판단문입니다. 동일 결함사례의 확정 정답 매핑은 찾지 못했습니다.",
-      details: [
-        `${formatCriteria(option)}로 단정할 수 있는 원문 결함사례가 문제은행에서 확인되지 않습니다.`,
-        wrongCriteria?.requirement
-          ? `${formatCriteria(option)} 기준 요구사항: ${truncateText(wrongCriteria.requirement)}`
-          : "",
-        "유사 결함사례 검색으로 보완했지만 충분히 가까운 확정 정답 사례도 찾지 못했습니다.",
-      ].filter(Boolean),
+      summary: `틀린 판단입니다. 이 문장은 ${formatCriteria(
+        option,
+      )} 결함으로 단정하기 어렵습니다. 아래는 해당 항목이 실제로 다루는 범위입니다.`,
+      details,
     };
   }
 
@@ -274,9 +366,7 @@ export function explainIncorrectOption(option, bank) {
   const details = [];
 
   if (matchType === "similar") {
-    details.push(
-      "동일 결함사례의 확정 정답 매핑은 찾지 못했지만, 문장 유사도가 가장 높은 원문 결함사례로 보완했습니다.",
-    );
+    details.push("가장 가까운 정답 사례를 참고해 기준 범위를 비교했습니다.");
   }
 
   details.push(`원래 정답 문장: ${original.statement}`);
@@ -285,15 +375,8 @@ export function explainIncorrectOption(option, bank) {
     details.push(`가장 가까운 원문 결함사례: ${original.defectCase}`);
   }
 
-  if (correctCriteria?.requirement) {
-    details.push(`${correctLabel} 기준 요구사항: ${truncateText(correctCriteria.requirement)}`);
-  }
-
-  if (wrongCriteria?.requirement) {
-    details.push(
-      `${wrongLabel}는 ${truncateText(wrongCriteria.requirement)}에 관한 기준이라 이 결함사례의 핵심과 다릅니다.`,
-    );
-  }
+  appendCriteriaScopeDetails(details, bank, original.criteriaCode, correctLabel);
+  appendCriteriaScopeDetails(details, bank, option.criteriaCode, wrongLabel);
 
   return {
     matchType,
@@ -309,12 +392,234 @@ export function explainIncorrectOption(option, bank) {
   };
 }
 
-function validateBank(bank) {
-  if (!bank || !Array.isArray(bank.truePool) || !Array.isArray(bank.falsePool)) {
-    throw new Error("Question bank must include truePool and falsePool arrays.");
+function buildDefectJudgmentQuestions(falsePool, truePool, count, random, meta = {}) {
+  const questions = [];
+
+  for (let index = 0; index < count; index += 1) {
+    const falseOptions = falsePool.slice(index * 2, index * 2 + 2);
+    const trueOptions = truePool.slice(index * 3, index * 3 + 3);
+    const optionsForQuestion = shuffle([...falseOptions, ...trueOptions], random).map(
+      (option, optionIndex) => ({
+        id: option.id,
+        label: `${optionIndex + 1})`,
+        statement: judgmentStatement(option),
+        criteriaCode: option.criteriaCode,
+        criteriaName: option.criteriaName,
+        defectCase: option.defectCase,
+        correctAnswer: option.correctAnswer ?? null,
+        correctAnswerName: option.correctAnswerName ?? null,
+        family: option.family ?? "",
+        trapAxis: option.trapAxis ?? "",
+        wrongnessReason: option.wrongnessReason ?? "",
+        isCorrect: Boolean(option.isCorrect),
+      }),
+    );
+
+    questions.push({
+      id: `q-${index + 1}`,
+      number: index + 1,
+      type: "multi",
+      mode: STUDY_MODES.DEFECT_JUDGMENT,
+      answerTarget: "incorrect",
+      prompt: DEFAULT_PROMPT_KO,
+      meta,
+      options: optionsForQuestion,
+    });
   }
-  if (bank.truePool.length < 2 || bank.falsePool.length < 3) {
-    throw new Error("Question bank needs at least 2 true and 3 false judgment statements.");
+
+  return questions;
+}
+
+function createBinaryDefectJudgmentSession(bank, options = {}) {
+  validateBank(bank);
+
+  const random = createSeededRandom(options.seed ?? Date.now());
+  const falseBySourceId = new Map();
+  for (const item of shuffle(buildRuntimeFalsePool(bank), random)) {
+    if (!item.sourceId || falseBySourceId.has(item.sourceId)) continue;
+    falseBySourceId.set(item.sourceId, item);
+  }
+
+  const pairs = shuffle(bank.truePool, random)
+    .map((source) => ({ source, falseOption: falseBySourceId.get(source.id) }))
+    .filter((item) => item.falseOption);
+  const count = clampCount(options.count ?? DEFAULT_SESSION_COUNT, pairs.length);
+  const questions = pairs.slice(0, count).map((pair, index) =>
+    buildBinaryDefectJudgmentQuestion(bank, random, {
+      index,
+      mode: options.mode,
+      answerTarget: options.answerTarget,
+      promptKo: options.promptKo,
+      source: pair.source,
+      falseOption: pair.falseOption,
+    }),
+  );
+
+  return makeSession(options.mode, questions, random);
+}
+
+function buildBinaryDefectJudgmentQuestion(bank, random, config) {
+  const { index, mode, answerTarget, promptKo, source, falseOption } = config;
+  const correctCriteria = getCriteria(bank, source.criteriaCode) ?? source;
+  const trueOption = {
+    id: `bt-${source.id}`,
+    label: "1)",
+    statement: judgmentStatement(source),
+    criteriaCode: source.criteriaCode,
+    criteriaName: correctCriteria.name ?? source.criteriaName,
+    defectCase: source.defectCase,
+    correctAnswer: source.criteriaCode,
+    correctAnswerName: correctCriteria.name ?? source.criteriaName,
+    family: "anchor",
+    trapAxis: "correct-criteria",
+    wrongnessReason: "",
+    isCorrect: true,
+  };
+  const falseJudgment = {
+    ...falseOption,
+    label: "2)",
+  };
+  const options = shuffle([trueOption, falseJudgment], random).map((option, optionIndex) => ({
+    ...option,
+    label: `${optionIndex + 1})`,
+  }));
+
+  return {
+    id: `q-${index + 1}`,
+    number: index + 1,
+    type: "single",
+    presentation: "judgment",
+    mode,
+    answerTarget,
+    prompt: promptKo,
+    promptKo,
+    body: source.defectCase,
+    badge: "",
+    meta: {
+      sourceId: source.id,
+      sourceRow: source.sourceRow ?? null,
+      correctCriteriaCode: source.criteriaCode,
+      falseCriteriaCode: falseOption.criteriaCode,
+    },
+    options,
+  };
+}
+
+function buildRuntimeFalsePool(bank) {
+  const out = [];
+  const seen = new Set();
+
+  for (const source of bank.truePool ?? []) {
+    const correctCode = source.criteriaCode;
+    const correctCriteria = getCriteria(bank, correctCode) ?? source;
+    const candidates = rankedGraphSimilarCriteriaCodes(bank, correctCode).filter((code) => {
+      if (code === correctCode || !getCriteria(bank, code)) return false;
+      return isRuntimeGraphCandidate(bank, source, code);
+    });
+
+    for (const wrongCode of candidates.slice(0, 2)) {
+      const wrongCriteria = getCriteria(bank, wrongCode);
+      const id = `rtf-${source.id}-${wrongCode}`;
+      if (!wrongCriteria || seen.has(id)) continue;
+      seen.add(id);
+      out.push({
+        id,
+        statement: judgmentStatement({
+          defectCase: source.defectCase,
+          criteriaCode: wrongCode,
+          criteriaName: wrongCriteria.name,
+        }),
+        defectCase: source.defectCase,
+        criteriaCode: wrongCode,
+        criteriaName: wrongCriteria.name,
+        correctAnswer: correctCode,
+        correctAnswerName: correctCriteria.name ?? source.criteriaName,
+        isCorrect: false,
+        family: "runtime-graph",
+        trapAxis: "similar-criteria",
+        source: "runtime-graph",
+        sourceId: source.id,
+        wrongnessReason: `${formatCriteria(wrongCriteria)}는 그래프상 유사 기준이지만, 이 사례의 정답 기준은 ${formatCriteria(
+          correctCriteria,
+        )}입니다.`,
+      });
+    }
+  }
+
+  return out;
+}
+
+function rankWeakCriteriaCodes(criteriaSummary) {
+  const criteria = criteriaSummary?.criteria ?? criteriaSummary ?? {};
+  return Object.entries(criteria)
+    .map(([code, item]) => ({ code: item?.code ?? code, ...item }))
+    .filter((item) => item?.code)
+    .sort(
+      (a, b) =>
+        (Number(b.weakScore ?? 0) - Number(a.weakScore ?? 0)) ||
+        (Number(b.wrongNoteCount ?? 0) - Number(a.wrongNoteCount ?? 0)) ||
+        String(a.code).localeCompare(String(b.code)),
+    )
+    .map((item) => item.code);
+}
+
+function prioritizeWeakFalsePool(bank, weakCriteriaCodes, random) {
+  const weak = new Set(weakCriteriaCodes);
+  const falsePool = buildRuntimeFalsePool(bank);
+  if (weak.size === 0) return shuffle(falsePool, random);
+
+  const correctCodeByCase = new Map(
+    (bank.truePool ?? []).map((item) => [normalizeText(item.defectCase), item.criteriaCode]),
+  );
+  const weakItems = [];
+  const rest = [];
+
+  for (const item of falsePool) {
+    const correctCode = correctCodeByCase.get(normalizeText(item.defectCase));
+    if (correctCode && weak.has(correctCode)) weakItems.push(item);
+    else rest.push(item);
+  }
+
+  return uniqueById([...shuffle(weakItems, random), ...shuffle(rest, random)]);
+}
+
+function prioritizeWeakTruePool(bank, weakCriteriaCodes, random) {
+  const weak = new Set(weakCriteriaCodes);
+  if (weak.size === 0) return shuffle(bank.truePool, random);
+
+  const weakItems = [];
+  const rest = [];
+  for (const item of bank.truePool ?? []) {
+    if (weak.has(item.criteriaCode)) weakItems.push(item);
+    else rest.push(item);
+  }
+
+  return uniqueById([...shuffle(weakItems, random), ...shuffle(rest, random)]);
+}
+
+function uniqueById(items) {
+  const seen = new Set();
+  const result = [];
+  for (const item of items) {
+    if (!item?.id || seen.has(item.id)) continue;
+    seen.add(item.id);
+    result.push(item);
+  }
+  return result;
+}
+
+function validateBank(bank) {
+  if (!bank || !Array.isArray(bank.truePool)) {
+    throw new Error("Question bank must include a truePool array.");
+  }
+  if (!bank.criteria || !bank.similarCriteriaByCode) {
+    throw new Error("Question bank must include criteria and similarCriteriaByCode.");
+  }
+  if (bank.truePool.length < 3) {
+    throw new Error("Question bank needs at least 3 true judgment statements.");
+  }
+  if (buildRuntimeFalsePool(bank).length < 2) {
+    throw new Error("Question bank needs at least 2 graph-generated false judgment statements.");
   }
 }
 
@@ -399,8 +704,169 @@ function getCriteria(bank, code) {
   return bank?.criteria?.[code] ?? null;
 }
 
+function rankedGraphSimilarCriteriaCodes(bank, criteriaCode) {
+  const sourceId = `criteria:${criteriaCode}`;
+  const scored = new Map();
+  for (const edge of bank?.wrongnoteGraph?.edges ?? []) {
+    if (edge.type !== "SIMILAR_TO" || edge.source !== sourceId || !edge.target?.startsWith("criteria:")) continue;
+    const targetCode = edge.target.slice("criteria:".length);
+    const rank = Number(edge.properties?.rank ?? 999);
+    const score = 1000 - rank;
+    scored.set(targetCode, Math.max(scored.get(targetCode) ?? 0, score));
+  }
+
+  for (const [index, code] of (bank?.similarCriteriaByCode?.[criteriaCode] ?? []).entries()) {
+    scored.set(code, Math.max(scored.get(code) ?? 0, 500 - index));
+  }
+
+  return [...scored.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([code]) => code);
+}
+
+function criteriaPairHasCoreOverlap(bank, leftCode, rightCode) {
+  const left = new Set(criteriaScopeTokens(bank, leftCode));
+  const right = new Set(criteriaScopeTokens(bank, rightCode));
+  for (const token of left) {
+    if (right.has(token)) return true;
+  }
+  return false;
+}
+
+function isRuntimeGraphCandidate(bank, source, candidateCode) {
+  const correctCriteria = getCriteria(bank, source.criteriaCode);
+  const candidateCriteria = getCriteria(bank, candidateCode);
+  const sameGroup = criteriaGroupKey(correctCriteria) === criteriaGroupKey(candidateCriteria);
+  if (!correctCriteria || !candidateCriteria) return false;
+  if (correctCriteria.domain !== candidateCriteria.domain) return false;
+  if (!criteriaPairHasCoreOverlap(bank, source.criteriaCode, candidateCode)) return false;
+  if (!hasCandidateNameOverlap(source.defectCase, candidateCriteria, sameGroup)) return false;
+  return hasClaimedCriteriaScopeOverlap({ ...source, criteriaCode: candidateCode, isCorrect: false }, bank);
+}
+
+function hasClaimedCriteriaScopeOverlap(item, bank) {
+  if (!item || item.isCorrect) return true;
+  const body = normalizeForScopeMatch(item.defectCase);
+  if (!body) return false;
+  const tokens = criteriaScopeTokens(bank, item.criteriaCode);
+  return tokens.some((token) => body.includes(normalizeForScopeMatch(token)));
+}
+
+function hasCandidateNameOverlap(defectCase, criteria, sameGroup) {
+  const body = normalizeForScopeMatch(defectCase);
+  const bodyTokens = normalizedTokenSet(defectCase);
+  if (!body) return false;
+  const matches = criteriaNameAnchorTokens(criteria).filter((token) => {
+    const normalized = normalizeLexicalToken(token);
+    if (!normalized) return false;
+    if (bodyTokens.has(normalized)) return true;
+    return normalized.length >= 4 && body.includes(normalized);
+  });
+  if (matches.length === 0) return false;
+  if (sameGroup) return true;
+  return matches.length >= 2 || matches.some((token) => normalizeLexicalToken(token).length >= 3);
+}
+
+function criteriaScopeTokens(bank, criteriaCode) {
+  const criteria = getCriteria(bank, criteriaCode);
+  const sourceParts = [criteria?.name, criteria?.requirement];
+  for (const item of bank?.checkItemPool ?? []) {
+    if (item.criteriaCode === criteriaCode) sourceParts.push(item.question, item.keywords);
+  }
+  return uniqueTokens(sourceParts.join(" "));
+}
+
+function uniqueTokens(value) {
+  const seen = new Set();
+  const tokens = [];
+  for (const token of rawTokens(value)) {
+    if (token.length < 2 || DOMAIN_STOPWORDS.has(token) || isGenericScopeToken(token) || seen.has(token)) continue;
+    seen.add(token);
+    tokens.push(token);
+  }
+  return tokens;
+}
+
+function criteriaNameAnchorTokens(criteria) {
+  const seen = new Set();
+  const tokens = [];
+  for (const token of rawTokens(criteria?.name)) {
+    if (token.length < 2 || DOMAIN_STOPWORDS.has(token) || ANCHOR_STOPWORDS.has(token) || seen.has(token)) continue;
+    seen.add(token);
+    tokens.push(token);
+  }
+  return tokens;
+}
+
+function rawTokens(value) {
+  return [...String(value ?? "").matchAll(/[가-힣A-Za-z0-9]+/gu)].map((match) => match[0]);
+}
+
+function normalizedTokenSet(value) {
+  return new Set(uniqueTokens(value).map(normalizeLexicalToken).filter(Boolean));
+}
+
+function normalizeLexicalToken(value) {
+  return normalizeForScopeMatch(value).replace(
+    /(으로|에서|에게|에는|으로는|로는|과는|와는|의|은|는|이|가|을|를|에|과|와|로)$/u,
+    "",
+  );
+}
+
+function criteriaGroupKey(criteria) {
+  if (!criteria) return "";
+  if (criteria.groupCode) return criteria.groupCode;
+  const code = String(criteria.code ?? "");
+  const parts = code.split(".");
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}.` : code;
+}
+
+function isGenericScopeToken(token) {
+  return GENERIC_SCOPE_ROOTS.some((root) => token.includes(root));
+}
+
+function normalizeForScopeMatch(value) {
+  return String(value ?? "")
+    .normalize("NFKC")
+    .replace(/[\p{P}\p{S}\s]+/gu, "")
+    .toLowerCase();
+}
+
+function judgmentStatement(option) {
+  const body = String(option.defectCase ?? "").replace(/\s+/g, " ").trim();
+  return `심사 과정에서 ${body} ${option.criteriaCode} ${option.criteriaName} 결함에 해당한다.`;
+}
+
 function formatCriteria(item) {
   return `${item.criteriaCode ?? item.code} ${item.criteriaName ?? item.name}`.trim();
+}
+
+function appendCriteriaScopeDetails(details, bank, criteriaCode, label) {
+  const criteria = getCriteria(bank, criteriaCode);
+  const examples = criteriaExamples(bank, criteriaCode);
+
+  if (criteria?.requirement) {
+    details.push(`${label} 기준 요구사항: ${truncateText(criteria.requirement)}`);
+  }
+  if (examples.checkItems.length) {
+    details.push(`${label} 확인사항 예: ${examples.checkItems.map((item) => truncateText(item, 90)).join(" / ")}`);
+  }
+  if (examples.defectCases.length) {
+    details.push(`${label} 결함사례 예: ${examples.defectCases.map((item) => truncateText(item, 90)).join(" / ")}`);
+  }
+}
+
+function criteriaExamples(bank, criteriaCode, limit = 2) {
+  return {
+    checkItems: (bank?.checkItemPool ?? [])
+      .filter((item) => item.criteriaCode === criteriaCode)
+      .map((item) => item.question)
+      .filter(Boolean)
+      .slice(0, limit),
+    defectCases: (bank?.defectCasePool ?? [])
+      .filter((item) => item.criteriaCode === criteriaCode)
+      .map((item) => item.defectCase)
+      .filter(Boolean)
+      .slice(0, limit),
+  };
 }
 
 function truncateText(value, maxLength = 140) {
@@ -420,7 +886,7 @@ function makeSession(mode, questions, random) {
 
 function clampCount(count, max) {
   const parsed = Number.parseInt(count, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(50, max);
+  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(DEFAULT_SESSION_COUNT, max);
   return Math.max(0, Math.min(parsed, max));
 }
 

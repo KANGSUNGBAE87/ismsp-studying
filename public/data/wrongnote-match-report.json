@@ -1,0 +1,1937 @@
+{
+  "generatedAt": "2026-06-15T16:08:05.791461+00:00",
+  "counts": {
+    "importedWrongNotes": 132,
+    "exact": 132,
+    "blankNumberedRows": 174
+  },
+  "items": [
+    {
+      "noteType": "check_item",
+      "originalNo": 1.0,
+      "criteriaCode": "1.1.6",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-22",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 2.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-47",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 3.0,
+      "criteriaCode": "1.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-51",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 4.0,
+      "criteriaCode": "2.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-63",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 5.0,
+      "criteriaCode": "2.10.4",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-291",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 6.0,
+      "criteriaCode": "2.11.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-332",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 7.0,
+      "criteriaCode": "2.2.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-71",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 8.0,
+      "criteriaCode": "2.2.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-73",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 9.0,
+      "criteriaCode": "2.4.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-109",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 10.0,
+      "criteriaCode": "2.4.4",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-118",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 11.0,
+      "criteriaCode": "2.5.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-135",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 12.0,
+      "criteriaCode": "2.6.6",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-178",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 13.0,
+      "criteriaCode": "2.9.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-233",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 14.0,
+      "criteriaCode": "2.9.7",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-266",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 15.0,
+      "criteriaCode": "3.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-354",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 16.0,
+      "criteriaCode": "3.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-346",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 17.0,
+      "criteriaCode": "3.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-353",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 18.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-362",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 19.0,
+      "criteriaCode": "3.1.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-380",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 20.0,
+      "criteriaCode": "3.1.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-377",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 21.0,
+      "criteriaCode": "3.1.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-375",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 22.0,
+      "criteriaCode": "3.2.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-400",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 23.0,
+      "criteriaCode": "3.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-413",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 24.0,
+      "criteriaCode": "2.11.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-320",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 25.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-361",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 26.0,
+      "criteriaCode": "3.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-354",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 27.0,
+      "criteriaCode": "3.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-409",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 28.0,
+      "criteriaCode": "2.3.4",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-105",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 29.0,
+      "criteriaCode": "2.9.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-253",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 30.0,
+      "criteriaCode": "2.9.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-228",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 31.0,
+      "criteriaCode": "2.7.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-193",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 31.0,
+      "criteriaCode": "2.12.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-344",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 32.0,
+      "criteriaCode": "2.6.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-159",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 33.0,
+      "criteriaCode": "2.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-98",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 34.0,
+      "criteriaCode": "2.7.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-193",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 35.0,
+      "criteriaCode": "1.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-51",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 36.0,
+      "criteriaCode": "2.11.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-332",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 37.0,
+      "criteriaCode": "2.11.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-320",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 38.0,
+      "criteriaCode": "2.11.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-321",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 39.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-362",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 40.0,
+      "criteriaCode": "2.8.2",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-204",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 41.0,
+      "criteriaCode": "1.4.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-59",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 42.0,
+      "criteriaCode": "2.8.6",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-223",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 43.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-46",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 44.0,
+      "criteriaCode": "2.6.3",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-163",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 45.0,
+      "criteriaCode": "2.9.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-257",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 46.0,
+      "criteriaCode": "3.1.5",
+      "matchType": "exact",
+      "matchedNodeId": "checkitem:c-376",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 47.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 48.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 49.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 50.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 51.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 52.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 53.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 54.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 55.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 56.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 57.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 58.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 59.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 60.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 61.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 62.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 63.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 64.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 65.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 66.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 67.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 68.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 69.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 70.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 71.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 72.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 73.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 74.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 75.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 76.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 77.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 78.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 79.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 80.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 81.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 82.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 83.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 84.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 85.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 86.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 87.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 88.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 89.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 90.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 91.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 92.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 93.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 94.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 95.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 96.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 97.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 98.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 99.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 100.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 101.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 102.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 103.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 104.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 105.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 106.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 107.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 108.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 109.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 110.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 111.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 112.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 113.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 114.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 115.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 116.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 117.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 118.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 119.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 120.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 121.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 122.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 123.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 124.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 125.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 126.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 127.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 128.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 129.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 130.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 131.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 132.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 133.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 134.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 135.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 136.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 137.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 138.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 139.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 140.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 141.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 142.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 143.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 144.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 145.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 146.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 147.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 148.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 149.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 150.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 151.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 152.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "check_item",
+      "originalNo": 153.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 1.0,
+      "criteriaCode": "3.1.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0ae93ff0d235c5ca",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 2.0,
+      "criteriaCode": "2.5.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:abee29d5310e2a37",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 3.0,
+      "criteriaCode": "3.2.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:f9f9f1446fb9f502",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 4.0,
+      "criteriaCode": "2.1.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:1575fd8e13a2af96",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 5.0,
+      "criteriaCode": "3.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ac3e8013ae3cf7b7",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 6.0,
+      "criteriaCode": "2.7.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0480c117b438faf2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 7.0,
+      "criteriaCode": "2.9.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:af2e1ef22cc33658",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 8.0,
+      "criteriaCode": "2.10.7",
+      "matchType": "exact",
+      "matchedNodeId": "defect:5c67c6e6898f6516",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 9.0,
+      "criteriaCode": "2.11.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4ee6a4e7bdad5658",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 10.0,
+      "criteriaCode": "2.5.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:abee29d5310e2a37",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 11.0,
+      "criteriaCode": "3.1.7",
+      "matchType": "exact",
+      "matchedNodeId": "defect:b6bfc5fa43273b6e",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 12.0,
+      "criteriaCode": "2.8.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:716193088be006c2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 13.0,
+      "criteriaCode": "2.3.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:3cbccbfe985945f8",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 14.0,
+      "criteriaCode": "2.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:a1cc7c142396f771",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 15.0,
+      "criteriaCode": "1.1.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:11d8dd92a73a700a",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 16.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7dce1418c3629f2b",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 17.0,
+      "criteriaCode": "3.5.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4a87548e620bd80d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 18.0,
+      "criteriaCode": "2.10.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ec9acc92e127393d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 19.0,
+      "criteriaCode": "1.4.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:5d4eceb8a9cee745",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 20.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:1b0e616cd6312914",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 21.0,
+      "criteriaCode": "2.10.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4c049e996bb97277",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 22.0,
+      "criteriaCode": "2.5.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:6256e7ed3c49987b",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 23.0,
+      "criteriaCode": "2.6.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4477f06e90084047",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 24.0,
+      "criteriaCode": "1.1.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:356a371aec13d00e",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 25.0,
+      "criteriaCode": "1.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:1e96f67da91b6b5b",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 26.0,
+      "criteriaCode": "1.4.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:c7d0c33da81a62bc",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 27.0,
+      "criteriaCode": "1.4.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:5d4eceb8a9cee745",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 28.0,
+      "criteriaCode": "3.3.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:842fdcd90d43c50c",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 29.0,
+      "criteriaCode": "2.10.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:86af1df5f3feb232",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 30.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:c8740e351fa247b7",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 30.0,
+      "criteriaCode": "2.5.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:19150f64210d6128",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 31.0,
+      "criteriaCode": "2.7.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0480c117b438faf2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 32.0,
+      "criteriaCode": "2.11.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:a143e6e0f01e3da3",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 33.0,
+      "criteriaCode": "1.1.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:814903bdb89461e8",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 34.0,
+      "criteriaCode": "2.5.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:6256e7ed3c49987b",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 35.0,
+      "criteriaCode": "2.8.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:c02fc914072d0848",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 36.0,
+      "criteriaCode": "2.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:c337d6ac411a3b55",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 37.0,
+      "criteriaCode": "2.5.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:2ed9d8462a89a0ae",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 38.0,
+      "criteriaCode": "2.6.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:f34034b143c404ef",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 39.0,
+      "criteriaCode": "3.5.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4a87548e620bd80d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 40.0,
+      "criteriaCode": "1.2.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:8490fe2eb0386868",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 41.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4913d2620b7f27ef",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 42.0,
+      "criteriaCode": "3.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ac3e8013ae3cf7b7",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 43.0,
+      "criteriaCode": "2.2.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:8d8a2f94746d93b2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 44.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4913d2620b7f27ef",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 45.0,
+      "criteriaCode": "3.4.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ae7e6d9c628a744d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 46.0,
+      "criteriaCode": "2.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0eaa6577301051e2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 47.0,
+      "criteriaCode": "2.1.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:124feb544900c357",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 48.0,
+      "criteriaCode": "2.12.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:2415ca5976e4c17d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 49.0,
+      "criteriaCode": "2.1.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:1575fd8e13a2af96",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 50.0,
+      "criteriaCode": "2.4.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:e79c93c5a550568c",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 51.0,
+      "criteriaCode": "3.5.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:34f52b50861023a3",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 52.0,
+      "criteriaCode": "2.7.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:e9404dda3f4c36f6",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 53.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7d72000488066f10",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 54.0,
+      "criteriaCode": "1.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:2c52b1701fb75068",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 55.0,
+      "criteriaCode": "2.6.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4ee9648b90ae59f9",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 56.0,
+      "criteriaCode": "1.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0e41590f04a1ab49",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 57.0,
+      "criteriaCode": "2.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:26890c944e8dc332",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 58.0,
+      "criteriaCode": "2.6.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:9c544be2ff0a063f",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 59.0,
+      "criteriaCode": "2.8.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ae4df1dd4ff836a9",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 60.0,
+      "criteriaCode": "2.7.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0480c117b438faf2",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 61.0,
+      "criteriaCode": "2.11.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:8a33119a9833d756",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 62.0,
+      "criteriaCode": "2.8.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ac792ab2eadb8006",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 63.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:c8740e351fa247b7",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 64.0,
+      "criteriaCode": "3.4.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7d99123bd009938d",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 65.0,
+      "criteriaCode": "2.5.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:19150f64210d6128",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 66.0,
+      "criteriaCode": "1.3.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:0e41590f04a1ab49",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 67.0,
+      "criteriaCode": "2.10.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ecdd83025dd37917",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 68.0,
+      "criteriaCode": "3.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7549d719b3112019",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 69.0,
+      "criteriaCode": "2.10.8",
+      "matchType": "exact",
+      "matchedNodeId": "defect:85a8bc3f20633dc9",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 70.0,
+      "criteriaCode": "2.4.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:da23fe64dbdd5c05",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 71.0,
+      "criteriaCode": "2.6.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:4ee9648b90ae59f9",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 72.0,
+      "criteriaCode": "1.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7d72000488066f10",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 73.0,
+      "criteriaCode": "3.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:7dce1418c3629f2b",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 74.0,
+      "criteriaCode": "3.2.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ac3e8013ae3cf7b7",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 75.0,
+      "criteriaCode": "2.6.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:204b72123983a7cc",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 76.0,
+      "criteriaCode": "2.9.5",
+      "matchType": "exact",
+      "matchedNodeId": "defect:5c3d776b2fff5bf0",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 77.0,
+      "criteriaCode": "2.8.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:e7651bb786f4751f",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 78.0,
+      "criteriaCode": "2.1.2",
+      "matchType": "exact",
+      "matchedNodeId": "defect:e6ac121cbb77ccca",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 79.0,
+      "criteriaCode": "2.2.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:120629c511cbda39",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 80.0,
+      "criteriaCode": "2.10.4",
+      "matchType": "exact",
+      "matchedNodeId": "defect:b85bcb68fea516a9",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 81.0,
+      "criteriaCode": "3.3.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ba227e9173fe1d68",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 82.0,
+      "criteriaCode": "2.8.6",
+      "matchType": "exact",
+      "matchedNodeId": "defect:ac792ab2eadb8006",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 83.0,
+      "criteriaCode": "1.4.1",
+      "matchType": "exact",
+      "matchedNodeId": "defect:5d4eceb8a9cee745",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 86.0,
+      "criteriaCode": "2.6.3",
+      "matchType": "exact",
+      "matchedNodeId": "defect:108d409767d2c883",
+      "similarityScore": 1.0
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 87.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 88.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 89.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 90.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 91.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 92.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 93.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 94.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 95.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 96.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 97.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 98.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 99.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 100.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 101.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 102.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 103.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 104.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 105.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 106.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 107.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 108.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 109.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 110.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 111.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 112.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 113.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 114.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 115.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 116.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 117.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 118.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 119.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 120.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 121.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 122.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 123.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 124.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 125.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 126.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 127.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 128.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 129.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 130.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 131.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 132.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 133.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 134.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 135.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 136.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 137.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 138.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 139.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 140.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 141.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 142.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 143.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 144.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 145.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 146.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 147.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 148.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 149.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 150.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 151.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 152.0,
+      "status": "blank_numbered_row"
+    },
+    {
+      "noteType": "defect_case",
+      "originalNo": 153.0,
+      "status": "blank_numbered_row"
+    }
+  ],
+  "source": "/Users/kangsungbae/Downloads/drive-download-20260613T123004Z-3-001/isms 확인사항 오답노트.xlsx"
+}

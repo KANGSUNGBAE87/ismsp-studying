@@ -8,3 +8,12 @@ graphify-out/
 .understand-anything/fingerprints.json
 .understand-anything/meta.json
 .understand-anything/knowledge-graph.json
+
+# Local OCR/rendering scratch files
+tmp/
+
+# Private/generated analysis outputs; keep curated runtime data under public/data instead.
+dist/
+ai/analysis/*-ocr-pages.jsonl
+ai/analysis/*-page-index.json
+ai/analysis/*question-bank.json

@@ -12,6 +12,9 @@ target/
 *.lock
 graphify-out/cache/
 graphify-out/
+ai/analysis/*-ocr-pages.jsonl
+ai/analysis/*-page-index.json
+ai/analysis/*question-bank.json
 .understand-anything/intermediate/
 .understand-anything/tmp/
 .understand-anything/fingerprints.json

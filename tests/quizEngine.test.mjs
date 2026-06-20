@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  STUDY_MODES,
   createCheckItemSession,
   createDefectCriterionSession,
+  createDefectJudgmentSession,
+  createWeakDefectJudgmentSession,
   createSession,
   createStudySession,
   evaluateAnswer,
@@ -17,9 +20,29 @@ import {
 
 const bank = {
   criteria: {
-    "1.1.1": { code: "1.1.1", name: "경영진의 참여", domain: "관리체계" },
-    "2.1.1": { code: "2.1.1", name: "정책의 유지관리", domain: "보호대책" },
-    "3.1.1": { code: "3.1.1", name: "개인정보 수집·이용", domain: "개인정보" },
+    "1.1.1": {
+      code: "1.1.1",
+      name: "경영진의 참여",
+      domain: "관리체계",
+      requirement: "경영진 참여와 책임을 정하여야 한다.",
+    },
+    "2.1.1": {
+      code: "2.1.1",
+      name: "정책의 유지관리",
+      domain: "관리체계",
+      requirement: "경영진 보고와 개인정보 수집 정책을 유지관리하여야 한다.",
+    },
+    "3.1.1": {
+      code: "3.1.1",
+      name: "개인정보 수집·이용",
+      domain: "관리체계",
+      requirement: "개인정보 수집과 이용 기준을 정하여야 한다.",
+    },
+  },
+  similarCriteriaByCode: {
+    "1.1.1": ["2.1.1"],
+    "2.1.1": ["1.1.1", "3.1.1"],
+    "3.1.1": ["2.1.1"],
   },
   falsePool: Array.from({ length: 12 }, (_, index) => ({
     id: `f-${index + 1}`,
@@ -29,45 +52,230 @@ const bank = {
     defectCase: `결함사례 F${index + 1}`,
     isCorrect: false,
   })),
-  truePool: Array.from({ length: 8 }, (_, index) => ({
+  truePool: Array.from({ length: 12 }, (_, index) => ({
     id: `t-${index + 1}`,
     statement: `옳은 판단문 ${index + 1}`,
     criteriaCode: index % 2 ? "3.1.1" : "1.1.1",
     criteriaName: index % 2 ? "개인정보 수집·이용" : "경영진의 참여",
-    defectCase: `결함사례 T${index + 1}`,
+    defectCase:
+      index % 2
+        ? `개인정보 수집 정책의 유지관리 항목이 동의 화면에 누락된 경우 T${index + 1}`
+        : `정보보호 정책의 유지관리 및 경영진 보고와 관련된 절차가 장기간 이행되지 않은 경우 T${index + 1}`,
     isCorrect: true,
   })),
 };
 
-test("createSession builds questions with three false options and two true options", () => {
+test("createSession builds error-hunt questions with two false options and three true options", () => {
   const session = createSession(bank, { count: 3, seed: 7 });
 
   assert.equal(session.questions.length, 3);
   for (const question of session.questions) {
     assert.equal(question.options.length, 5);
-    assert.equal(question.options.filter((option) => option.isCorrect).length, 2);
-    assert.equal(question.options.filter((option) => !option.isCorrect).length, 3);
+    assert.equal(question.options.filter((option) => option.isCorrect).length, 3);
+    assert.equal(question.options.filter((option) => !option.isCorrect).length, 2);
     assert.equal(new Set(question.options.map((option) => option.id)).size, 5);
+    assert.equal(question.answerTarget, "incorrect");
+    assert.ok(question.options.filter((option) => !option.isCorrect).every((option) => option.id.startsWith("rtf-")));
   }
 });
 
-test("evaluateAnswer only accepts exactly the two correct option ids", () => {
+test("evaluateAnswer only accepts exactly the two incorrect option ids in error-hunt mode", () => {
   const session = createSession(bank, { count: 1, seed: 11 });
   const question = session.questions[0];
-  const correctIds = question.options
-    .filter((option) => option.isCorrect)
+  const incorrectIds = question.options
+    .filter((option) => !option.isCorrect)
     .map((option) => option.id);
-  const wrongId = question.options.find((option) => !option.isCorrect).id;
+  const correctId = question.options.find((option) => option.isCorrect).id;
 
-  assert.deepEqual(evaluateAnswer(question, correctIds), {
+  assert.deepEqual(evaluateAnswer(question, incorrectIds), {
     status: "correct",
     isCorrect: true,
     selectedCount: 2,
     correctCount: 2,
+    selectedOptionIds: incorrectIds,
+    correctOptionIds: incorrectIds,
   });
-  assert.equal(evaluateAnswer(question, [correctIds[0]]).status, "incomplete");
-  assert.equal(evaluateAnswer(question, [correctIds[0], wrongId]).status, "wrong");
-  assert.equal(evaluateAnswer(question, [...correctIds, wrongId]).status, "invalid-count");
+  assert.equal(evaluateAnswer(question, [incorrectIds[0]]).status, "incomplete");
+  assert.equal(evaluateAnswer(question, [incorrectIds[0], correctId]).status, "wrong");
+  assert.equal(evaluateAnswer(question, [...incorrectIds, correctId]).status, "invalid-count");
+});
+
+test("createSession generates false options at runtime instead of sampling the original falsePool", () => {
+  const scopeBank = {
+    criteria: {
+      "1.4.3": {
+        code: "1.4.3",
+        name: "관리체계 개선",
+        requirement: "관리체계상의 문제점에 대한 원인을 분석하고 재발방지 대책을 수립하여야 한다.",
+      },
+      "2.9.3": {
+        code: "2.9.3",
+        name: "백업 및 복구관리",
+        requirement: "백업 대상, 주기, 방법, 보관장소, 보관기간, 소산 등의 절차를 수립하여야 한다.",
+      },
+      "2.9.4": {
+        code: "2.9.4",
+        name: "로그 및 접속기록 관리",
+        requirement: "로그유형, 보관기간, 보관방법 등을 정하고 안전하게 보관하여야 한다.",
+      },
+      "2.11.2": {
+        code: "2.11.2",
+        name: "취약점 점검 및 조치",
+        requirement: "정보시스템 취약점 점검을 수행하고 발견된 취약점에 대해 재발방지 분석을 수행하여야 한다.",
+      },
+    },
+    similarCriteriaByCode: {
+      "1.4.3": ["2.11.2"],
+      "2.9.3": ["2.9.4"],
+      "2.9.4": ["2.9.3"],
+      "2.11.2": ["1.4.3"],
+    },
+    checkItemPool: [
+      {
+        id: "c-backup",
+        question: "백업 및 복구 절차를 수립하고 복구테스트를 수행하고 있는가?",
+        criteriaCode: "2.9.3",
+        keywords: "백업 복구 복구테스트",
+      },
+      {
+        id: "c-vuln",
+        question: "정보시스템 취약점 점검 절차를 수립하고 정기적으로 수행하고 있는가?",
+        criteriaCode: "2.11.2",
+        keywords: "취약점 점검 조치",
+      },
+    ],
+    falsePool: [
+      {
+        id: "bad-management-vuln",
+        statement:
+          "관리체계상 문제점에 대한 재발방지 대책을 수립하고 있으나 경영진 보고가 장기간 이루어지지 않은 경우 2.11.2 취약점 점검 및 조치 결함에 해당한다.",
+        defectCase:
+          "관리체계상 문제점에 대한 재발방지 대책을 수립하고 있으나 경영진 보고가 장기간 이루어지지 않은 경우",
+        criteriaCode: "2.11.2",
+        criteriaName: "취약점 점검 및 조치",
+        isCorrect: false,
+      },
+      {
+        id: "bad-log-backup",
+        statement:
+          "로그 기록 대상, 방법, 보존기간, 검토 주기 기준이 없는 경우 2.9.3 백업 및 복구관리 결함에 해당한다.",
+        defectCase: "로그 기록 대상, 방법, 보존기간, 검토 주기 기준이 없는 경우",
+        criteriaCode: "2.9.3",
+        criteriaName: "백업 및 복구관리",
+        isCorrect: false,
+      },
+      {
+        id: "good-vuln",
+        statement:
+          "정보시스템 취약점 점검 대상에서 일부 서버가 누락된 경우 2.11.2 취약점 점검 및 조치 결함에 해당한다.",
+        defectCase: "정보시스템 취약점 점검 대상에서 일부 서버가 누락된 경우",
+        criteriaCode: "2.11.2",
+        criteriaName: "취약점 점검 및 조치",
+        isCorrect: false,
+      },
+      {
+        id: "good-backup",
+        statement:
+          "백업 대상과 복구절차가 수립되어 있지 않은 경우 2.9.3 백업 및 복구관리 결함에 해당한다.",
+        defectCase: "백업 대상과 복구절차가 수립되어 있지 않은 경우",
+        criteriaCode: "2.9.3",
+        criteriaName: "백업 및 복구관리",
+        isCorrect: false,
+      },
+    ],
+    truePool: [
+      {
+        id: "t-1",
+        statement: "정답 판단문 1",
+        defectCase: "관리체계 개선 활동에서 취약점 점검 결과 발견된 취약점의 원인 분석 및 개선 대책을 수립하지 않은 경우",
+        criteriaCode: "2.11.2",
+        criteriaName: "취약점 점검 및 조치",
+        isCorrect: true,
+      },
+      {
+        id: "t-2",
+        statement: "정답 판단문 2",
+        defectCase: "백업 작업 로그와 복구 기록의 보관기간 기준이 수립되어 있지 않은 경우",
+        criteriaCode: "2.9.3",
+        criteriaName: "백업 및 복구관리",
+        isCorrect: true,
+      },
+      {
+        id: "t-3",
+        statement: "정답 판단문 3",
+        defectCase: "관리체계 개선 활동에서 정보시스템 취약점 점검 결과에 대한 원인 분석과 개선 조치가 지연된 경우",
+        criteriaCode: "2.11.2",
+        criteriaName: "취약점 점검 및 조치",
+        isCorrect: true,
+      },
+    ],
+  };
+
+  const session = createSession(scopeBank, { count: 1, seed: 1 });
+  const falseIds = session.questions[0].options.filter((option) => !option.isCorrect).map((option) => option.id);
+
+  assert.equal(falseIds.length, 2);
+  assert.ok(falseIds.every((id) => id.startsWith("rtf-")));
+  assert.ok(falseIds.every((id) => !scopeBank.falsePool.some((item) => item.id === id)));
+});
+
+test("createStudySession builds a two-option drill for finding the correct defect judgment", () => {
+  const session = createStudySession(bank, {
+    mode: STUDY_MODES.DEFECT_JUDGMENT_CORRECT,
+    count: 3,
+    seed: 17,
+  });
+
+  assert.equal(session.mode, STUDY_MODES.DEFECT_JUDGMENT_CORRECT);
+  assert.equal(session.questions.length, 3);
+  for (const question of session.questions) {
+    assert.equal(question.type, "single");
+    assert.equal(question.presentation, "judgment");
+    assert.equal(question.answerTarget, "correct");
+    assert.ok(question.body);
+    assert.equal(question.options.length, 2);
+    assert.equal(question.options.filter((option) => option.isCorrect).length, 1);
+    assert.equal(question.options.filter((option) => !option.isCorrect).length, 1);
+
+    const correctId = question.options.find((option) => option.isCorrect).id;
+    const incorrectId = question.options.find((option) => !option.isCorrect).id;
+    assert.equal(evaluateSingleAnswer(question, correctId).status, "correct");
+    assert.equal(evaluateSingleAnswer(question, incorrectId).status, "wrong");
+  }
+});
+
+test("createStudySession builds a two-option drill for finding the incorrect defect judgment", () => {
+  const session = createStudySession(bank, {
+    mode: STUDY_MODES.DEFECT_JUDGMENT_INCORRECT,
+    count: 3,
+    seed: 19,
+  });
+
+  assert.equal(session.mode, STUDY_MODES.DEFECT_JUDGMENT_INCORRECT);
+  assert.equal(session.questions.length, 3);
+  for (const question of session.questions) {
+    assert.equal(question.type, "single");
+    assert.equal(question.presentation, "judgment");
+    assert.equal(question.answerTarget, "incorrect");
+    assert.ok(question.body);
+    assert.equal(question.options.length, 2);
+    assert.equal(question.options.filter((option) => option.isCorrect).length, 1);
+    assert.equal(question.options.filter((option) => !option.isCorrect).length, 1);
+
+    const correctJudgmentId = question.options.find((option) => option.isCorrect).id;
+    const incorrectJudgmentId = question.options.find((option) => !option.isCorrect).id;
+    assert.equal(evaluateSingleAnswer(question, incorrectJudgmentId).status, "correct");
+    assert.equal(evaluateSingleAnswer(question, correctJudgmentId).status, "wrong");
+  }
+});
+
+test("createStudySession defaults to ten incorrect-judgment questions", () => {
+  const session = createStudySession(bank, { seed: 29 });
+
+  assert.equal(session.mode, STUDY_MODES.DEFECT_JUDGMENT_INCORRECT);
+  assert.equal(session.questions.length, 10);
+  assert.equal(session.questions.every((question) => question.answerTarget === "incorrect"), true);
+  assert.equal(session.questions.every((question) => question.options.length === 2), true);
 });
 
 test("normalizeCount caps sessions to the available true and false pools", () => {
@@ -80,9 +288,9 @@ test("getQuestionStats summarizes answered questions", () => {
   const session = createSession(bank, { count: 2, seed: 23 });
   const first = session.questions[0];
   const second = session.questions[1];
-  const firstCorrect = first.options.filter((option) => option.isCorrect).map((option) => option.id);
+  const firstCorrect = first.options.filter((option) => !option.isCorrect).map((option) => option.id);
   const secondWrong = [
-    second.options.find((option) => option.isCorrect).id,
+    second.options.find((option) => !option.isCorrect).id,
     second.options.find((option) => !option.isCorrect).id,
   ];
 
@@ -95,6 +303,81 @@ test("getQuestionStats summarizes answered questions", () => {
   assert.equal(stats.answered, 2);
   assert.equal(stats.correct, 1);
   assert.equal(stats.scorePercent, 50);
+});
+
+test("createDefectJudgmentSession keeps weak problem mode hidden unless explicitly requested", () => {
+  const session = createDefectJudgmentSession(bank, { count: 1, seed: 31 });
+  assert.equal(session.mode, "defect-judgment");
+  assert.equal(session.hiddenFeature, undefined);
+});
+
+test("createWeakDefectJudgmentSession prepares hidden weak-problem sessions without UI exposure", () => {
+  const weakBank = {
+    ...bank,
+    truePool: [
+      {
+        id: "t-weak-1",
+        statement: "취약 결함사례 A는 1.1.1 경영진의 참여 결함에 해당한다.",
+        criteriaCode: "1.1.1",
+        criteriaName: "경영진의 참여",
+        defectCase: "정보보호 정책의 유지관리 및 경영진 보고와 관련된 절차가 장기간 이행되지 않은 경우 A",
+        isCorrect: true,
+      },
+      {
+        id: "t-weak-2",
+        statement: "취약 결함사례 B는 1.1.1 경영진의 참여 결함에 해당한다.",
+        criteriaCode: "1.1.1",
+        criteriaName: "경영진의 참여",
+        defectCase: "정보보호 정책의 유지관리 및 경영진 보고와 관련된 절차가 장기간 이행되지 않은 경우 B",
+        isCorrect: true,
+      },
+      {
+        id: "t-weak-3",
+        statement: "취약 결함사례 C는 1.1.1 경영진의 참여 결함에 해당한다.",
+        criteriaCode: "1.1.1",
+        criteriaName: "경영진의 참여",
+        defectCase: "정보보호 정책의 유지관리 및 경영진 보고와 관련된 절차가 장기간 이행되지 않은 경우 C",
+        isCorrect: true,
+      },
+      ...bank.truePool,
+    ],
+    falsePool: [
+      {
+        id: "f-weak-1",
+        statement: "취약 결함사례 A는 1.1.2 최고책임자의 지정 결함에 해당한다.",
+        criteriaCode: "1.1.2",
+        criteriaName: "최고책임자의 지정",
+        defectCase: "취약 결함사례 A",
+        isCorrect: false,
+      },
+      {
+        id: "f-weak-2",
+        statement: "취약 결함사례 B는 1.1.2 최고책임자의 지정 결함에 해당한다.",
+        criteriaCode: "1.1.2",
+        criteriaName: "최고책임자의 지정",
+        defectCase: "취약 결함사례 B",
+        isCorrect: false,
+      },
+      ...bank.falsePool,
+    ],
+  };
+  const session = createWeakDefectJudgmentSession(
+    weakBank,
+    { criteriaSummary: { criteria: { "1.1.1": { weakScore: 100 } } } },
+    { count: 1, seed: 42 },
+  );
+  const question = session.questions[0];
+
+  assert.equal(session.hiddenFeature, "weak-problem-review");
+  assert.equal(question.meta.personalized, true);
+  assert.equal(question.options.filter((option) => !option.isCorrect).length, 2);
+  assert.equal(question.options.filter((option) => option.isCorrect).length, 3);
+  assert.ok(question.options.filter((option) => !option.isCorrect).every((option) => option.id.startsWith("rtf-")));
+  assert.ok(
+    question.options
+      .filter((option) => !option.isCorrect)
+      .every((option) => !weakBank.falsePool.some((source) => source.id === option.id)),
+  );
 });
 
 test("explainIncorrectOption finds the original correct mapping for the same defect case", () => {
@@ -185,6 +468,22 @@ test("explainIncorrectOption explains when no original mapping can be recovered"
       criteria: {
         "2.7.2": { code: "2.7.2", name: "암호키 관리", requirement: "암호키를 관리하여야 한다." },
       },
+      checkItemPool: [
+        {
+          id: "c-key",
+          question: "암호키 생성, 이용, 보관, 배포 및 파기 절차를 수립하고 있는가?",
+          criteriaCode: "2.7.2",
+          criteriaName: "암호키 관리",
+        },
+      ],
+      defectCasePool: [
+        {
+          id: "d-key",
+          defectCase: "암호키 보관 위치와 접근권한을 통제하지 않은 경우",
+          criteriaCode: "2.7.2",
+          criteriaName: "암호키 관리",
+        },
+      ],
       truePool: [
         {
           id: "t-md5",
@@ -200,8 +499,12 @@ test("explainIncorrectOption explains when no original mapping can be recovered"
     },
   );
 
-  assert.equal(explanation.matchType, "none");
-  assert.match(explanation.summary, /이 조합은 문제은행에서 오답 후보로 생성된 판단문입니다/);
+  assert.equal(explanation.matchType, "criteria-scope");
+  assert.match(explanation.summary, /2\.7\.2 암호키 관리 결함으로 단정하기 어렵습니다/);
+  assert.ok(explanation.details.some((detail) => detail.includes("기준 요구사항")));
+  assert.ok(explanation.details.some((detail) => detail.includes("확인사항 예")));
+  assert.ok(explanation.details.some((detail) => detail.includes("결함사례 예")));
+  assert.ok(!explanation.details.join(" ").includes("문제은행에서 확인되지 않습니다"));
 });
 
 // --- Criterion-choice study modes (modes 2 and 3) ---
@@ -411,6 +714,14 @@ test("explainCheckItemAnswer explains the correct criterion for a confirmation i
 });
 
 test("createStudySession dispatches by mode", () => {
+  assert.equal(
+    createStudySession(bank, { mode: STUDY_MODES.DEFECT_JUDGMENT_CORRECT, count: 1, seed: 7 }).mode,
+    STUDY_MODES.DEFECT_JUDGMENT_CORRECT,
+  );
+  assert.equal(
+    createStudySession(bank, { mode: STUDY_MODES.DEFECT_JUDGMENT_INCORRECT, count: 1, seed: 7 }).mode,
+    STUDY_MODES.DEFECT_JUDGMENT_INCORRECT,
+  );
   assert.equal(
     createStudySession(studyBank, { mode: "defect-criterion", count: 1, seed: 7 }).mode,
     "defect-criterion",
