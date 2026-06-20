@@ -2,18 +2,31 @@ import {
   DEFAULT_SESSION_COUNT,
   STUDY_MODES,
   createStudySession,
+  createWrongNoteSession,
   evaluateAnswer,
   evaluateSingleAnswer,
   explainCheckItemAnswer,
   explainDefectCriterionAnswer,
   explainIncorrectOption,
+  extractWrongNoteRef,
   getQuestionStats,
 } from "../src/core/quizEngine.js";
 import { DEFAULT_LOCALE, t } from "../src/i18n.js";
-import { createBrowserPlatform } from "../src/platform/adapters.js";
+import { createAdsAdapter, createBrowserPlatform } from "../src/platform/adapters.js";
 
 const platform = createBrowserPlatform();
+const ads = createAdsAdapter();
 const SESSION_SIZE_OPTIONS = [DEFAULT_SESSION_COUNT];
+const NEW_SESSION_LIMIT = 2;
+const INTERSTITIAL_INTERVAL_MS = 3 * 60 * 1000;
+
+// Ad placement ids (replace with real Apps in Toss ad group ids at release).
+const AD_PLACEMENTS = {
+  wrongNoteUnlock: "wrongnote_unlock_rewarded",
+  moreSession: "more_session_rewarded",
+  homeReturn: "home_return_interstitial",
+};
+
 const state = {
   bank: null,
   screen: "home",
@@ -24,6 +37,7 @@ const state = {
   checked: {},
   locale: DEFAULT_LOCALE,
   sessionSize: normalizeSessionSize(platform.storage.get("sessionSize", DEFAULT_SESSION_COUNT)),
+  newSessionLeft: NEW_SESSION_LIMIT,
 };
 
 const MODES = [
@@ -68,8 +82,82 @@ async function init() {
       criteriaSimilarity: await criteriaSimilarityResponse.json(),
     };
     renderHome();
+    mountBanner();
   } catch (error) {
     renderError(error);
+  }
+}
+
+// --- Ads: banner (all screens), interstitial (home return), rewarded (wrong note / more) ---
+
+function mountBanner() {
+  const slot = document.querySelector("#ad-banner");
+  if (!slot || !ads.bannerSupported()) return;
+  slot.innerHTML = `<span class="ad-banner-label">${t(state.locale, "adBannerLabel")}</span>`;
+  slot.hidden = false;
+}
+
+function maybeShowInterstitial() {
+  const last = Number(platform.storage.get("lastInterstitialAt", 0));
+  if (Date.now() - last < INTERSTITIAL_INTERVAL_MS) return Promise.resolve();
+  platform.storage.set("lastInterstitialAt", Date.now());
+  return ads.showInterstitial(AD_PLACEMENTS.homeReturn);
+}
+
+// --- Wrong note ("취약기준 문제모음집") storage + session ---
+
+function loadWrongNoteRefs() {
+  const list = platform.storage.get("wrongNotes", []);
+  return Array.isArray(list) ? list : [];
+}
+
+function saveWrongNoteFromQuestion(question) {
+  const ref = extractWrongNoteRef(question);
+  if (!ref) return;
+  const list = loadWrongNoteRefs();
+  const key = `${ref.mode}:${ref.sourceId}`;
+  if (list.some((item) => `${item.mode}:${item.sourceId}` === key)) return;
+  list.push(ref);
+  platform.storage.set("wrongNotes", list.slice(-1000));
+}
+
+async function startWrongNote() {
+  const refs = loadWrongNoteRefs();
+  if (refs.length === 0) {
+    window.alert(t(state.locale, "wrongNoteEmpty"));
+    return;
+  }
+
+  // Reward unlock persists by an active-bundle id: reopening an unfinished bundle
+  // does NOT require watching the ad again (rewarded-ad relock bug guard).
+  const active = platform.storage.get("wnActive", null);
+  let seed;
+  if (active && active.completed === false && Number.isFinite(active.seed)) {
+    seed = active.seed;
+  } else {
+    const result = await ads.showRewarded(AD_PLACEMENTS.wrongNoteUnlock);
+    if (!result?.rewarded) {
+      window.alert(t(state.locale, "adNotWatched"));
+      return;
+    }
+    seed = Date.now();
+    platform.storage.set("wnActive", { seed, completed: false });
+  }
+
+  state.mode = STUDY_MODES.WRONG_NOTE;
+  state.session = createWrongNoteSession(state.bank, refs, { count: DEFAULT_SESSION_COUNT, seed });
+  state.currentIndex = 0;
+  state.answers = {};
+  state.checked = {};
+  state.screen = "quiz";
+  render();
+}
+
+function markWrongNoteBundleCompleted() {
+  const active = platform.storage.get("wnActive", null);
+  if (active) {
+    active.completed = true;
+    platform.storage.set("wnActive", active);
   }
 }
 
@@ -89,9 +177,23 @@ function startSession(mode, count) {
   render();
 }
 
-function goHome() {
+async function goHome() {
+  await maybeShowInterstitial();
   state.screen = "home";
   renderHome();
+}
+
+function recordCheckOutcome(question) {
+  if (state.mode === STUDY_MODES.WRONG_NOTE) {
+    if (state.session.questions.every((item) => state.checked[item.id])) {
+      markWrongNoteBundleCompleted();
+    }
+    return;
+  }
+  const selectedIds = state.answers[question.id] ?? [];
+  if (!evaluateQuestion(question, selectedIds).isCorrect) {
+    saveWrongNoteFromQuestion(question);
+  }
 }
 
 function renderLoading() {
@@ -129,12 +231,27 @@ function renderHome() {
             `,
           ).join("")}
         </div>
+        ${renderWrongNoteEntry()}
         ${renderHomeControls()}
         ${renderBankMeta()}
       </section>
     </main>
   `;
   wireHomeEvents();
+}
+
+function renderWrongNoteEntry() {
+  const count = loadWrongNoteRefs().length;
+  return `
+    <button class="wrongnote-card" data-action="wrong-note">
+      <span class="wrongnote-head">
+        <strong>${t(state.locale, "wrongNoteTitle")}</strong>
+        <span class="wrongnote-count">${t(state.locale, "wrongNoteCount")} ${count}</span>
+      </span>
+      <span class="wrongnote-desc">${t(state.locale, "wrongNoteDesc")}</span>
+      <span class="rewarded-pill">▶ ${t(state.locale, "watchAdToStart")}</span>
+    </button>
+  `;
 }
 
 function renderHomeControls() {
@@ -214,15 +331,15 @@ function renderHeader() {
 }
 
 function renderControls() {
+  const newSessionText =
+    state.mode === STUDY_MODES.WRONG_NOTE
+      ? t(state.locale, "moreViaAd")
+      : state.newSessionLeft > 0
+        ? `${t(state.locale, "newSession")} (${state.newSessionLeft}/${NEW_SESSION_LIMIT})`
+        : `▶ ${t(state.locale, "moreViaAd")}`;
   return `
     <section class="control-block">
-      <label>
-        <span>${t(state.locale, "sessionSize")}</span>
-        <select data-control="session-size">
-          ${SESSION_SIZE_OPTIONS.map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
-        </select>
-      </label>
-      <button class="primary full-width" data-action="new-session">${t(state.locale, "newSession")}</button>
+      <button class="primary full-width" data-action="new-session">${newSessionText}</button>
       <button class="secondary full-width" data-action="home">${t(state.locale, "backToHome")}</button>
     </section>
   `;
@@ -489,23 +606,48 @@ function wireHomeEvents() {
   document.querySelectorAll("[data-mode]").forEach((button) => {
     button.addEventListener("click", () => {
       platform.haptics.impact();
+      state.newSessionLeft = NEW_SESSION_LIMIT;
       startSession(button.dataset.mode, state.sessionSize);
     });
+  });
+  document.querySelector('[data-action="wrong-note"]')?.addEventListener("click", () => {
+    platform.haptics.impact();
+    startWrongNote();
   });
   wireSharedControls();
 }
 
 function wireQuizEvents() {
-  document.querySelector('[data-action="new-session"]')?.addEventListener("click", () => {
+  document.querySelector('[data-action="new-session"]')?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    if (state.mode === STUDY_MODES.WRONG_NOTE) {
+      markWrongNoteBundleCompleted();
+      await startWrongNote();
+      return;
+    }
+    if (state.newSessionLeft > 0) {
+      state.newSessionLeft -= 1;
+      startSession(state.mode, state.sessionSize);
+      return;
+    }
+    button.disabled = true;
+    const result = await ads.showRewarded(AD_PLACEMENTS.moreSession);
+    if (!result?.rewarded) {
+      window.alert(t(state.locale, "adNotWatched"));
+      if (button) button.disabled = false;
+      return;
+    }
+    state.newSessionLeft = NEW_SESSION_LIMIT;
     startSession(state.mode, state.sessionSize);
   });
-  document.querySelector('[data-action="home"]')?.addEventListener("click", () => {
-    goHome();
+  document.querySelector('[data-action="home"]')?.addEventListener("click", async () => {
+    await goHome();
   });
   document.querySelector('[data-action="check"]')?.addEventListener("click", () => {
     const question = currentQuestion();
     state.checked[question.id] = true;
     platform.haptics.impact();
+    recordCheckOutcome(question);
     render();
     setTimeout(() => {
       const statusEl = document.querySelector(".status-line");

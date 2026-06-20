@@ -70,6 +70,15 @@ const messages = {
     checkItemPool: "확인사항",
     defectCriterionPrompt: "다음 결함사례는 어떤 ISMS-P 인증기준 결함에 해당하나요?",
     checkItemPrompt: "다음 확인사항은 어떤 ISMS-P 인증기준에 해당하나요?",
+    wrongNoteTitle: "취약기준 문제모음집",
+    wrongNoteDesc: "틀렸던 문제만 모아 다시 풉니다. 광고를 보면 10문제가 열려요.",
+    wrongNoteEmpty: "아직 틀린 문제가 없습니다. 먼저 학습을 진행해 주세요.",
+    wrongNoteCount: "모은 오답",
+    watchAdToStart: "광고 보고 10문제 풀기",
+    adNotWatched: "광고를 끝까지 시청해야 문제가 열립니다.",
+    moreViaAd: "광고 보고 더 풀기",
+    adBannerLabel: "Sponsored",
+    sessionDone: "이 묶음을 모두 풀었습니다. 더 풀려면 광고를 시청하세요.",
   },
 };
 

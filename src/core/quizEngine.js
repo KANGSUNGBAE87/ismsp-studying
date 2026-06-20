@@ -9,6 +9,7 @@ export const STUDY_MODES = {
   DEFECT_JUDGMENT_INCORRECT: "defect-judgment-incorrect",
   DEFECT_CRITERION: "defect-criterion",
   CHECK_ITEM: "check-item",
+  WRONG_NOTE: "wrong-note",
 };
 
 const DEFECT_CRITERION_PROMPT_KO = "다음 결함사례는 어떤 ISMS-P 인증기준 결함에 해당하나요?";
@@ -223,6 +224,131 @@ export function createCheckItemSession(bank, options = {}) {
   );
 
   return makeSession(STUDY_MODES.CHECK_ITEM, questions, random);
+}
+
+// --- Wrong-note ("취약기준 문제모음집") ---
+// A wrong answer only needs to remember {mode, sourceId}. The question is then
+// rebuilt from the same source on demand, with a fresh seed so option order /
+// distractors are reshuffled (so it is not trivially memorized).
+
+export function extractWrongNoteRef(question) {
+  const sourceId = question?.meta?.sourceId;
+  const mode = question?.originMode ?? question?.mode;
+  if (!sourceId || !mode) return null;
+  return { mode, sourceId };
+}
+
+export function createWrongNoteSession(bank, refs = [], options = {}) {
+  if (!bank?.criteria) {
+    throw new Error("Question bank must include criteria.");
+  }
+  const random = createSeededRandom(options.seed ?? Date.now());
+
+  const deduped = [];
+  const seen = new Set();
+  for (const ref of refs) {
+    if (!ref?.sourceId || !ref?.mode) continue;
+    const key = `${ref.mode}:${ref.sourceId}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(ref);
+  }
+
+  const limit = clampCount(options.count ?? DEFAULT_SESSION_COUNT, deduped.length);
+  const chosen = shuffle(deduped, random).slice(0, limit);
+
+  // Binary-judgment refs need the runtime false pool; build it once and cache.
+  let falseBySourceId = null;
+  const getFalseFor = (sourceId) => {
+    if (!falseBySourceId) {
+      falseBySourceId = new Map();
+      for (const item of buildRuntimeFalsePool(bank)) {
+        if (item.sourceId && !falseBySourceId.has(item.sourceId)) falseBySourceId.set(item.sourceId, item);
+      }
+    }
+    return falseBySourceId.get(sourceId) ?? null;
+  };
+
+  const questions = [];
+  for (const ref of chosen) {
+    const question = buildWrongNoteQuestion(bank, random, ref, questions.length, getFalseFor);
+    if (question) questions.push(question);
+  }
+
+  return makeSession(STUDY_MODES.WRONG_NOTE, questions, random);
+}
+
+function buildWrongNoteQuestion(bank, random, ref, index, getFalseFor) {
+  const { mode, sourceId } = ref;
+
+  if (mode === STUDY_MODES.DEFECT_CRITERION) {
+    const item = (bank.defectCasePool ?? []).find((entry) => entry.id === sourceId);
+    if (!item) return null;
+    return decorateWrongNote(
+      buildCriterionQuestion(bank, random, {
+        index,
+        mode,
+        promptKo: DEFECT_CRITERION_PROMPT_KO,
+        body: item.defectCase,
+        correctCode: item.criteriaCode,
+        badge: "",
+        meta: { sourceId: item.id, sourceRow: item.sourceRow ?? null },
+      }),
+      mode,
+    );
+  }
+
+  if (mode === STUDY_MODES.CHECK_ITEM) {
+    const item = (bank.checkItemPool ?? []).find((entry) => entry.id === sourceId);
+    if (!item) return null;
+    return decorateWrongNote(
+      buildCriterionQuestion(bank, random, {
+        index,
+        mode,
+        promptKo: CHECK_ITEM_PROMPT_KO,
+        body: item.question,
+        correctCode: item.criteriaCode,
+        badge: item.displayBadge ?? "",
+        meta: {
+          sourceId: item.id,
+          sourceRow: item.sourceRow ?? null,
+          sourceVariant: item.sourceVariant ?? "integrated",
+          keywords: item.keywords ?? "",
+        },
+      }),
+      mode,
+    );
+  }
+
+  if (mode === STUDY_MODES.DEFECT_JUDGMENT_INCORRECT || mode === STUDY_MODES.DEFECT_JUDGMENT_CORRECT) {
+    const source = (bank.truePool ?? []).find((entry) => entry.id === sourceId);
+    if (!source) return null;
+    const falseOption = getFalseFor(source.id);
+    if (!falseOption) return null;
+    const answerTarget = mode === STUDY_MODES.DEFECT_JUDGMENT_CORRECT ? "correct" : "incorrect";
+    const promptKo =
+      answerTarget === "correct" ? DEFECT_JUDGMENT_CORRECT_PROMPT_KO : DEFECT_JUDGMENT_INCORRECT_PROMPT_KO;
+    return decorateWrongNote(
+      buildBinaryDefectJudgmentQuestion(bank, random, {
+        index,
+        mode,
+        answerTarget,
+        promptKo,
+        source,
+        falseOption,
+      }),
+      mode,
+    );
+  }
+
+  return null;
+}
+
+function decorateWrongNote(question, originMode) {
+  if (!question) return question;
+  question.originMode = originMode;
+  question.meta = { ...(question.meta ?? {}), originMode };
+  return question;
 }
 
 export function evaluateSingleAnswer(question, selectedOptionId) {
