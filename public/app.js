@@ -9,7 +9,7 @@ import {
   explainIncorrectOption,
   getQuestionStats,
 } from "../src/core/quizEngine.js";
-import { t, languages } from "../src/i18n.js";
+import { DEFAULT_LOCALE, t } from "../src/i18n.js";
 import { createBrowserPlatform } from "../src/platform/adapters.js";
 
 const platform = createBrowserPlatform();
@@ -22,7 +22,7 @@ const state = {
   currentIndex: 0,
   answers: {},
   checked: {},
-  locale: platform.storage.get("locale", platform.locale.defaultLocale()),
+  locale: DEFAULT_LOCALE,
   sessionSize: normalizeSessionSize(platform.storage.get("sessionSize", DEFAULT_SESSION_COUNT)),
 };
 
@@ -146,14 +146,6 @@ function renderHomeControls() {
           ${SESSION_SIZE_OPTIONS.map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
         </select>
       </label>
-      <label>
-        <span>${t(state.locale, "language")}</span>
-        <select data-control="locale">
-          ${languages
-            .map((language) => optionHtml(language.code, language.label, language.code === state.locale))
-            .join("")}
-        </select>
-      </label>
     </section>
   `;
 }
@@ -228,14 +220,6 @@ function renderControls() {
         <span>${t(state.locale, "sessionSize")}</span>
         <select data-control="session-size">
           ${SESSION_SIZE_OPTIONS.map((count) => optionHtml(count, `${count}`, count === state.sessionSize)).join("")}
-        </select>
-      </label>
-      <label>
-        <span>${t(state.locale, "language")}</span>
-        <select data-control="locale">
-          ${languages
-            .map((language) => optionHtml(language.code, language.label, language.code === state.locale))
-            .join("")}
         </select>
       </label>
       <button class="primary full-width" data-action="new-session">${t(state.locale, "newSession")}</button>
@@ -557,13 +541,6 @@ function wireSharedControls() {
     state.sessionSize = normalizeSessionSize(event.target.value);
     platform.storage.set("sessionSize", state.sessionSize);
     if (state.screen === "quiz") startSession(state.mode, state.sessionSize);
-  });
-  document.querySelector('[data-control="locale"]')?.addEventListener("change", (event) => {
-    state.locale = event.target.value;
-    platform.storage.set("locale", state.locale);
-    document.documentElement.lang = state.locale;
-    if (state.screen === "home") renderHome();
-    else render();
   });
 }
 

@@ -26,7 +26,7 @@ export function createBrowserPlatform() {
     },
     locale: {
       defaultLocale() {
-        return navigator.language?.startsWith("en") ? "en" : "ko";
+        return "ko";
       },
     },
   };
