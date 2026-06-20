@@ -1,7 +1,6 @@
 import {
   DEFAULT_SESSION_COUNT,
   STUDY_MODES,
-  buildWeakAreaSummary,
   createStudySession,
   evaluateAnswer,
   evaluateSingleAnswer,
@@ -157,7 +156,6 @@ function renderHomeControls() {
 function render() {
   const question = currentQuestion();
   const stats = getQuestionStats(state.session.questions, state.answers);
-  const weakAreas = buildWeakAreaSummary(state.session.questions, state.answers);
   const checked = Boolean(state.checked[question.id]);
   const selectedIds = state.answers[question.id] ?? [];
   const result = checked ? evaluateQuestion(question, selectedIds) : null;
@@ -169,9 +167,12 @@ function render() {
         : t(state.locale, "selectTwo");
 
   app.innerHTML = `
-    <main class="app-shell">
-      <aside class="side-panel">
+    <main class="app-shell quiz-shell">
+      <section class="quiz-intro-panel">
         ${renderHeader()}
+      </section>
+
+      <aside class="side-panel">
         ${renderControls()}
         ${renderStats(stats)}
         ${renderQuestionNav()}
@@ -189,16 +190,11 @@ function render() {
           ${question.options.map((option) => renderOption(question, option, selectedIds, checked)).join("")}
         </div>
         ${renderStatus(question, result)}
+        ${renderReview(question, checked, selectedIds)}
         <div class="quiz-footer-slot">
           ${renderQuizFooter()}
         </div>
       </section>
-
-      <aside class="review-panel">
-        ${renderReview(question, checked, selectedIds)}
-        ${renderWeakAreas(weakAreas)}
-        ${renderBankMeta()}
-      </aside>
     </main>
   `;
 
@@ -319,6 +315,11 @@ function renderJudgmentOption(question, option, selectedIds, checked) {
   const selected = selectedIds.includes(option.id);
   const answerOption = isAnswerOption(question, option);
   const explanation = checked && !option.isCorrect ? explainIncorrectOption(option, state.bank) : null;
+  const resultBadges = renderOptionResultBadges({
+    checked,
+    selected,
+    answerOption,
+  });
   const buttonClasses = [
     "option-button",
     selected ? "selected" : "",
@@ -333,7 +334,10 @@ function renderJudgmentOption(question, option, selectedIds, checked) {
     <article class="${cardClasses}">
       <button class="${buttonClasses}" data-option="${escapeAttribute(option.id)}">
         <span class="option-label">${option.label}</span>
-        <span class="option-text">${escapeHtml(option.statement)}</span>
+        <span class="option-content">
+          <span class="option-text">${escapeHtml(option.statement)}</span>
+          ${resultBadges}
+        </span>
       </button>
       ${explanation ? renderOptionExplanation(explanation) : ""}
     </article>
@@ -342,6 +346,11 @@ function renderJudgmentOption(question, option, selectedIds, checked) {
 
 function renderCriterionOption(option, selectedIds, checked) {
   const selected = selectedIds.includes(option.id);
+  const resultBadges = renderOptionResultBadges({
+    checked,
+    selected,
+    answerOption: option.isCorrect,
+  });
   const buttonClasses = [
     "option-button",
     "criterion-option",
@@ -356,10 +365,22 @@ function renderCriterionOption(option, selectedIds, checked) {
     <article class="option-card">
       <button class="${buttonClasses}" data-option="${escapeAttribute(option.id)}">
         <span class="option-label">${option.label}</span>
-        <span class="option-text"><strong>${escapeHtml(option.code)}</strong> ${escapeHtml(option.name)}</span>
+        <span class="option-content">
+          <span class="option-text"><strong>${escapeHtml(option.code)}</strong> ${escapeHtml(option.name)}</span>
+          ${resultBadges}
+        </span>
       </button>
     </article>
   `;
+}
+
+function renderOptionResultBadges({ checked, selected, answerOption }) {
+  if (!checked) return "";
+  const badges = [];
+  if (selected) badges.push(`<span class="choice-badge selected">${t(state.locale, "myChoice")}</span>`);
+  if (answerOption) badges.push(`<span class="choice-badge answer">${t(state.locale, "answerChoice")}</span>`);
+  if (badges.length === 0) return "";
+  return `<span class="option-result-badges">${badges.join("")}</span>`;
 }
 
 function renderOptionExplanation(explanation) {
@@ -396,26 +417,9 @@ function renderStatus(question, result) {
 }
 
 function renderReview(question, checked, selectedIds) {
-  if (!checked) {
-    return `
-      <section class="review-card">
-        <h3>${t(state.locale, "explanation")}</h3>
-        <p>${t(state.locale, "noAnswerYet")}</p>
-      </section>
-    `;
-  }
+  if (!checked || question.presentation === "judgment") return "";
 
   if (question.type === "single") {
-    if (question.presentation === "judgment") {
-      return `
-        <section class="review-card">
-          <h3>${t(state.locale, "answerExplanation")}</h3>
-          ${renderSingleJudgmentAnswerSummary(question, selectedIds)}
-          <p>${t(state.locale, "inlineExplanationInfo")}</p>
-        </section>
-      `;
-    }
-
     const explain =
       question.mode === STUDY_MODES.CHECK_ITEM ? explainCheckItemAnswer : explainDefectCriterionAnswer;
     const explanation = explain(question, selectedIds[0] ?? null, state.bank);
@@ -434,30 +438,6 @@ function renderReview(question, checked, selectedIds) {
     <section class="review-card">
       <h3>${t(state.locale, "answerExplanation")}</h3>
       ${renderJudgmentAnswerSummary(question, selectedIds)}
-      <p>${t(state.locale, "inlineExplanationInfo")}</p>
-    </section>
-  `;
-}
-
-function renderWeakAreas(weakAreas) {
-  return `
-    <section class="review-card">
-      <h3>${t(state.locale, "weakAreas")}</h3>
-      ${
-        weakAreas.length === 0
-          ? `<p>${t(state.locale, "noWeakAreas")}</p>`
-          : `<div class="weak-list">${weakAreas
-              .slice(0, 5)
-              .map(
-                (item) => `
-                  <div>
-                    <strong>${escapeHtml(item.code)} ${escapeHtml(item.name)}</strong>
-                    <span>${item.misses}</span>
-                  </div>
-                `,
-              )
-              .join("")}</div>`
-      }
     </section>
   `;
 }
