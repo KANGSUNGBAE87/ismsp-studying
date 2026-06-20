@@ -66,6 +66,15 @@ test("judgment feedback is shown inside option cards without the old right-side 
   assert.equal(i18nContent.includes("오답 후보 해설"), false);
 });
 
+test("criterion-choice review separates correct and wrong option explanations", () => {
+  assert.ok(appJsContent.includes("renderCriterionChoiceReview"));
+  assert.ok(appJsContent.includes("renderWrongCriterionExplanations"));
+  assert.ok(appJsContent.includes("wrongAnswerExplanations"));
+  assert.ok(appJsContent.includes("correctExplanation"));
+  assert.ok(i18nContent.includes("오답 해설"));
+  assert.ok(i18nContent.includes("선택한 오답"));
+});
+
 test("mobile touch targets meet the 44px minimum", () => {
   assert.ok(stylesContent.includes("min-height: 44px"));
   assert.ok(stylesContent.includes("min-height: 46px"));

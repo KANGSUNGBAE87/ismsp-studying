@@ -423,21 +423,53 @@ function renderReview(question, checked, selectedIds) {
     const explain =
       question.mode === STUDY_MODES.CHECK_ITEM ? explainCheckItemAnswer : explainDefectCriterionAnswer;
     const explanation = explain(question, selectedIds[0] ?? null, state.bank);
-    return `
-      <section class="review-card">
-        <h3>${t(state.locale, "answerExplanation")}</h3>
-        <p class="${explanation.isCorrect ? "explain-correct" : "explain-wrong"}">${escapeHtml(explanation.summary)}</p>
-        <ul>
-          ${explanation.details.map((detail) => `<li>${escapeHtml(detail)}</li>`).join("")}
-        </ul>
-      </section>
-    `;
+    return renderCriterionChoiceReview(explanation);
   }
 
   return `
     <section class="review-card">
       <h3>${t(state.locale, "answerExplanation")}</h3>
       ${renderJudgmentAnswerSummary(question, selectedIds)}
+    </section>
+  `;
+}
+
+function renderCriterionChoiceReview(explanation) {
+  return `
+    <section class="review-card answer-review-card">
+      <h3>${t(state.locale, "answerExplanation")}</h3>
+      <p class="${explanation.isCorrect ? "explain-correct" : "explain-wrong"}">${escapeHtml(explanation.summary)}</p>
+      <ul>
+        ${explanation.correctExplanation.details.map((detail) => `<li>${escapeHtml(detail)}</li>`).join("")}
+      </ul>
+    </section>
+    ${renderWrongCriterionExplanations(explanation.distractorExplanations)}
+  `;
+}
+
+function renderWrongCriterionExplanations(wrongAnswerExplanations) {
+  if (!wrongAnswerExplanations?.length) return "";
+
+  return `
+    <section class="review-card wrong-answer-review-card">
+      <h3>${t(state.locale, "wrongAnswerExplanations")}</h3>
+      <div class="wrong-answer-list">
+        ${wrongAnswerExplanations
+          .map(
+            (item) => `
+              <article class="criterion-explanation-item">
+                <div class="criterion-explanation-title">
+                  <strong>${escapeHtml(item.code)} ${escapeHtml(item.name)}</strong>
+                  ${item.isSelected ? `<span>${t(state.locale, "selectedWrongOption")}</span>` : ""}
+                </div>
+                <ul>
+                  ${item.details.map((detail) => `<li>${escapeHtml(detail)}</li>`).join("")}
+                </ul>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
     </section>
   `;
 }

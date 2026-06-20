@@ -532,12 +532,14 @@ select {
 }
 
 .review-list,
-.weak-list {
+.weak-list,
+.wrong-answer-list {
   display: grid;
   gap: 10px;
 }
 
-.review-list article {
+.review-list article,
+.criterion-explanation-item {
   display: grid;
   gap: 7px;
   padding: 12px;
@@ -554,6 +556,37 @@ select {
 .review-list small {
   color: var(--muted);
   line-height: 1.45;
+}
+
+.criterion-explanation-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.criterion-explanation-title strong {
+  color: var(--primary-strong);
+}
+
+.criterion-explanation-title span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(217, 140, 40, 0.15);
+  color: #8a520f;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.review-card ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.review-card li {
+  color: var(--muted);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .chip {

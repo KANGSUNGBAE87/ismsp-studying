@@ -656,6 +656,101 @@ test("defect criterion distractors are drawn only from similarCriteriaByCode", (
   }
 });
 
+test("criterion-choice distractors prefer graph evidence across criteria defects and check items", () => {
+  const evidenceBank = {
+    criteria: {
+      "1.2.1": {
+        code: "1.2.1",
+        name: "정보자산 식별",
+        domain: "1.관리체계 수립 및 운영",
+        groupCode: "1.2.",
+        groupName: "위험 관리",
+        requirement: "정보자산 분류기준을 수립하고 모든 정보자산을 식별하여 목록으로 관리하여야 한다.",
+      },
+      "1.2.2": {
+        code: "1.2.2",
+        name: "현황 및 흐름분석",
+        domain: "1.관리체계 수립 및 운영",
+        groupCode: "1.2.",
+        groupName: "위험 관리",
+        requirement: "업무 현황과 정보자산 흐름을 분석하여야 한다.",
+      },
+      "1.2.3": {
+        code: "1.2.3",
+        name: "위험 평가",
+        domain: "1.관리체계 수립 및 운영",
+        groupCode: "1.2.",
+        groupName: "위험 관리",
+        requirement: "정보자산에 대한 위험을 식별하고 평가하여야 한다.",
+      },
+      "1.2.4": {
+        code: "1.2.4",
+        name: "보호대책 선정",
+        domain: "1.관리체계 수립 및 운영",
+        groupCode: "1.2.",
+        groupName: "위험 관리",
+        requirement: "위험 평가 결과에 따라 정보자산 보호대책을 선정하여야 한다.",
+      },
+      "1.1.4": {
+        code: "1.1.4",
+        name: "범위 설정",
+        domain: "1.관리체계 수립 및 운영",
+        groupCode: "1.1.",
+        groupName: "관리체계 기반 마련",
+        requirement: "관리체계 범위 내 정보자산과 서비스를 명확히 설정하여야 한다.",
+      },
+      "2.10.2": {
+        code: "2.10.2",
+        name: "클라우드 보안",
+        domain: "2.보호대책 요구사항",
+        groupCode: "2.10.",
+        groupName: "시스템 및 서비스 보안관리",
+        requirement: "클라우드 서비스 이용 시 관리자 접근 및 보안 설정 보호대책을 수립하여야 한다.",
+      },
+    },
+    similarCriteriaByCode: {
+      "1.2.1": ["2.10.2", "1.2.2", "1.2.3", "1.2.4"],
+    },
+    defectCasePool: [
+      {
+        id: "d-assets",
+        defectCase:
+          "관리체계 범위 내 자산 목록에서 중요정보 취급자 PC를 통제하는 출력물 보안, 문서암호화, USB매체제어 시스템이 누락된 경우",
+        criteriaCode: "1.2.1",
+        criteriaName: "정보자산 식별",
+      },
+      {
+        id: "d-scope",
+        defectCase: "관리체계 범위 내 정보자산과 서비스 범위가 명확히 설정되지 않은 경우",
+        criteriaCode: "1.1.4",
+        criteriaName: "범위 설정",
+      },
+    ],
+    checkItemPool: [
+      {
+        id: "c-assets",
+        question: "관리체계 범위 내 모든 정보자산을 식별하여 목록으로 관리하고 있는가?",
+        criteriaCode: "1.2.1",
+        criteriaName: "정보자산 식별",
+        keywords: "정보자산 식별 목록 보안등급",
+      },
+      {
+        id: "c-scope",
+        question: "관리체계 범위 내 정보자산과 서비스를 명확히 설정하고 있는가?",
+        criteriaCode: "1.1.4",
+        criteriaName: "범위 설정",
+        keywords: "관리체계 범위 정보자산 서비스",
+      },
+    ],
+  };
+
+  const session = createDefectCriterionSession(evidenceBank, { count: 1, seed: 1 });
+  const codes = optionCodes(session.questions[0]);
+
+  assert.ok(codes.includes("1.1.4"), "expected evidence-matched scope criterion to replace weak fallback");
+  assert.equal(codes.includes("2.10.2"), false, "cloud security should not be offered for an asset-list defect");
+});
+
 test("createCheckItemSession carries a virtual-asset badge and single answer", () => {
   const session = createCheckItemSession(studyBank, { count: 2, seed: 3 });
 
@@ -700,6 +795,10 @@ test("explainDefectCriterionAnswer explains the correct criterion on a wrong pic
   assert.equal(explanation.correctCriteriaCode, correct.code);
   assert.equal(explanation.selectedCriteriaCode, wrong.code);
   assert.ok(explanation.summary.includes(correct.code));
+  assert.equal(explanation.correctExplanation.code, correct.code);
+  assert.equal(explanation.distractorExplanations.length, question.options.length - 1);
+  assert.ok(explanation.distractorExplanations.some((item) => item.code === wrong.code && item.isSelected));
+  assert.ok(explanation.distractorExplanations.every((item) => item.details.some((detail) => detail.includes("결함사례"))));
 });
 
 test("explainCheckItemAnswer explains the correct criterion for a confirmation item", () => {
@@ -711,6 +810,9 @@ test("explainCheckItemAnswer explains the correct criterion for a confirmation i
   const explanation = explainCheckItemAnswer(question, wrong.id, studyBank);
   assert.equal(explanation.correctCriteriaCode, correct.code);
   assert.ok(explanation.details.length > 0);
+  assert.equal(explanation.correctExplanation.code, correct.code);
+  assert.equal(explanation.distractorExplanations.length, question.options.length - 1);
+  assert.ok(explanation.distractorExplanations.every((item) => item.details.some((detail) => detail.includes("확인사항"))));
 });
 
 test("createStudySession dispatches by mode", () => {

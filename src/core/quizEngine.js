@@ -20,6 +20,8 @@ const DOMAIN_STOPWORDS = new Set([
   "해당",
   "결함",
   "기준",
+  "보안",
+  "보호",
   "관리",
   "절차",
   "수립",
@@ -32,8 +34,12 @@ const DOMAIN_STOPWORDS = new Set([
   "담당자",
   "세부",
   "정보보호",
+  "정보",
+  "중요정보",
+  "내부정보",
   "개인정보",
   "시스템",
+  "서비스",
   "주요",
   "일부",
   "등이",
@@ -771,6 +777,9 @@ function criteriaScopeTokens(bank, criteriaCode) {
   for (const item of bank?.checkItemPool ?? []) {
     if (item.criteriaCode === criteriaCode) sourceParts.push(item.question, item.keywords);
   }
+  for (const item of bank?.defectCasePool ?? []) {
+    if (item.criteriaCode === criteriaCode) sourceParts.push(item.defectCase);
+  }
   return uniqueTokens(sourceParts.join(" "));
 }
 
@@ -901,7 +910,7 @@ function validateCriterionBank(bank, poolKey) {
 
 function buildCriterionQuestion(bank, random, config) {
   const { index, mode, promptKo, body, correctCode, badge, meta } = config;
-  const distractors = pickDistractors(bank, correctCode, 4, random);
+  const distractors = pickDistractors(bank, correctCode, 4, random, body);
   const codes = shuffle([correctCode, ...distractors], random);
 
   const options = codes.map((code, optionIndex) => {
@@ -928,18 +937,12 @@ function buildCriterionQuestion(bank, random, config) {
   };
 }
 
-function pickDistractors(bank, correctCode, n, random) {
-  const exclude = new Set([correctCode]);
-  const similar = (bank.similarCriteriaByCode?.[correctCode] ?? []).filter(
-    (code) => !exclude.has(code) && getCriteria(bank, code),
-  );
-
-  const picked = sampleN(similar, n, random);
-  for (const code of picked) exclude.add(code);
+function pickDistractors(bank, correctCode, n, random, sourceText = "") {
+  const ranked = rankedCriterionDistractors(bank, correctCode, sourceText);
+  const picked = ranked.slice(0, n).map((item) => item.code);
 
   if (picked.length < n) {
-    // Vetted similar list was too short; fall back to same-domain then global,
-    // sampled deterministically so a given seed stays reproducible.
+    const exclude = new Set([correctCode, ...picked]);
     const fallback = sampleN(fallbackCandidates(bank, correctCode, exclude), n - picked.length, random);
     picked.push(...fallback);
   }
@@ -947,8 +950,85 @@ function pickDistractors(bank, correctCode, n, random) {
   return picked.slice(0, n);
 }
 
+function rankedCriterionDistractors(bank, correctCode, sourceText) {
+  const correctCriteria = getCriteria(bank, correctCode);
+  const sourceTokens = evidenceTokenSet(sourceText);
+  const correctTokens = evidenceTokenSet(criteriaScopeTokens(bank, correctCode).join(" "));
+  const similarRank = new Map((bank.similarCriteriaByCode?.[correctCode] ?? []).map((code, index) => [code, index]));
+
+  return Object.keys(bank.criteria ?? {})
+    .filter((code) => code !== correctCode && getCriteria(bank, code))
+    .map((code) => {
+      const criteria = getCriteria(bank, code);
+      const candidateTokens = evidenceTokenSet(criteriaScopeTokens(bank, code).join(" "));
+      const sameGroup = criteriaGroupKey(correctCriteria) === criteriaGroupKey(criteria);
+      const sameDomain = correctCriteria?.domain && correctCriteria.domain === criteria?.domain;
+      const sourceOverlap = tokenOverlapScore(sourceTokens, candidateTokens);
+      const criteriaOverlap = tokenOverlapScore(correctTokens, candidateTokens);
+      const graphScore = criterionGraphScore(bank, correctCode, code);
+      const similarScore = similarRank.has(code) ? (20 - Math.min(similarRank.get(code), 19)) / 20 : 0;
+      const score =
+        sourceOverlap * 3.4 +
+        criteriaOverlap * 1.6 +
+        graphScore * 0.45 +
+        similarScore * 0.18 +
+        (sameGroup ? 1.05 : 0) +
+        (sameDomain ? 0.45 : 0);
+
+      return { code, score };
+    })
+    .sort((a, b) => b.score - a.score || a.code.localeCompare(b.code));
+}
+
 function sampleN(items, n, random) {
   return shuffle(items, random).slice(0, n);
+}
+
+function evidenceTokenSet(value) {
+  return new Set(uniqueTokens(value).map(normalizeLexicalToken).filter(Boolean));
+}
+
+function tokenOverlapScore(leftTokens, rightTokens) {
+  const left = [...leftTokens];
+  const right = [...rightTokens];
+  if (left.length === 0 || right.length === 0) return 0;
+
+  let hits = 0;
+  for (const leftToken of left) {
+    if (right.some((rightToken) => tokensCompatible(leftToken, rightToken))) hits += 1;
+  }
+
+  return Math.max(hits / left.length, hits / right.length);
+}
+
+function tokensCompatible(left, right) {
+  if (!left || !right) return false;
+  if (left === right) return true;
+  if (left.length < 2 || right.length < 2) return false;
+  return left.includes(right) || right.includes(left);
+}
+
+function criterionGraphScore(bank, leftCode, rightCode) {
+  const leftId = `criteria:${leftCode}`;
+  const rightId = `criteria:${rightCode}`;
+  let score = 0;
+
+  for (const edge of bank?.wrongnoteGraph?.edges ?? []) {
+    const samePair =
+      (edge.source === leftId && edge.target === rightId) || (edge.source === rightId && edge.target === leftId);
+    if (!samePair) continue;
+
+    if (edge.type === "SIMILAR_TO") {
+      const rank = Number(edge.properties?.rank ?? 20);
+      score = Math.max(score, (20 - Math.min(rank, 20)) / 20);
+    }
+    if (edge.type === "CONFUSED_WITH") {
+      const count = Number(edge.properties?.count ?? 1);
+      score = Math.max(score, Math.min(count, 10) / 12);
+    }
+  }
+
+  return score;
 }
 
 function fallbackCandidates(bank, correctCode, exclude) {
@@ -968,6 +1048,11 @@ function explainCriterionChoice(question, selectedOptionId, bank, subject) {
   const isCorrect = Boolean(selectedOption?.isCorrect);
 
   const correctLabel = `${correctOption.code} ${correctOption.name}`;
+  const focusKind = question.mode === STUDY_MODES.CHECK_ITEM ? "checkItem" : "defectCase";
+  const correctExplanation = criterionOptionExplanation(correctOption, bank, focusKind, false);
+  const distractorExplanations = question.options
+    .filter((option) => !option.isCorrect)
+    .map((option) => criterionOptionExplanation(option, bank, focusKind, option.id === id));
   const details = [];
 
   if (correctCriteria?.requirement) {
@@ -991,11 +1076,44 @@ function explainCriterionChoice(question, selectedOptionId, bank, subject) {
     correctCriteriaName: correctOption.name,
     selectedCriteriaCode: selectedOption?.code ?? null,
     selectedCriteriaName: selectedOption?.name ?? null,
+    correctExplanation,
+    distractorExplanations,
     summary: isCorrect
       ? `정답입니다. ${subject}는 ${correctLabel} 기준에 해당합니다.`
       : `틀린 선택입니다. ${subject}는 ${
           selectedOption ? `${selectedOption.code} ${selectedOption.name}가 아니라 ` : ""
         }${correctLabel} 기준에 해당합니다.`,
+    details,
+  };
+}
+
+function criterionOptionExplanation(option, bank, focusKind, isSelected) {
+  const criteria = getCriteria(bank, option?.code);
+  const label = `${option.code} ${option.name}`;
+  const examples = criteriaExamples(bank, option.code);
+  const details = [];
+
+  if (criteria?.requirement) {
+    details.push(`${label} 기준 요구사항: ${truncateText(criteria.requirement)}`);
+  }
+
+  if (focusKind === "checkItem") {
+    if (examples.checkItems.length) {
+      details.push(`${label} 확인사항 예: ${examples.checkItems.map((item) => truncateText(item, 110)).join(" / ")}`);
+    } else if (criteria?.requirement) {
+      details.push(`${label} 확인사항 기준: ${truncateText(criteria.requirement, 110)}`);
+    }
+  } else if (examples.defectCases.length) {
+    details.push(`${label} 결함사례 예: ${examples.defectCases.map((item) => truncateText(item, 110)).join(" / ")}`);
+  } else if (criteria?.requirement) {
+    details.push(`${label} 결함사례 기준: ${truncateText(criteria.requirement, 110)}`);
+  }
+
+  return {
+    code: option.code,
+    name: option.name,
+    isSelected,
+    summary: `${label}는 ${focusKind === "checkItem" ? "확인사항" : "결함사례"} 범위가 다음과 같습니다.`,
     details,
   };
 }
