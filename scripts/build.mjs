@@ -9,6 +9,7 @@ const entries = [
   'public/styles.css',
   'public/data/ismsp-defect-bank.json',
   'public/data/wrongnote-graph.json',
+  'public/data/criteria-similarity.json',
   'src/i18n.js',
   'src/core/quizEngine.js',
   'src/platform/adapters.js',

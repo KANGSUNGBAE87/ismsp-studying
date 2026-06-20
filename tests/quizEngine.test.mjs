@@ -751,6 +751,33 @@ test("criterion-choice distractors prefer graph evidence across criteria defects
   assert.equal(codes.includes("2.10.2"), false, "cloud security should not be offered for an asset-list defect");
 });
 
+test("criterion-choice distractors use the prebuilt criteria similarity graph before legacy similar lists", () => {
+  const semanticBank = {
+    ...studyBank,
+    similarCriteriaByCode: {
+      "2.2.1": ["3.1.1", "1.1.1", "2.2.2", "2.2.3"],
+    },
+    criteriaSimilarity: {
+      similarCriteriaByCode: {
+        "2.2.1": [
+          { code: "2.2.2", score: 84, rank: 1 },
+          { code: "2.2.3", score: 72, rank: 2 },
+          { code: "2.2.4", score: 69, rank: 3 },
+          { code: "2.2.5", score: 65, rank: 4 },
+        ],
+      },
+    },
+  };
+
+  const session = createDefectCriterionSession(semanticBank, { count: 2, seed: 5 });
+  const question = session.questions.find((item) => item.options.some((option) => option.code === "2.2.1" && option.isCorrect));
+  assert.ok(question, "expected a 2.2.1 question in the two-item fixture session");
+  const codes = new Set(optionCodes(question));
+
+  assert.deepEqual(codes, new Set(["2.2.1", "2.2.2", "2.2.3", "2.2.4", "2.2.5"]));
+  assert.equal(codes.has("3.1.1"), false);
+});
+
 test("createCheckItemSession carries a virtual-asset badge and single answer", () => {
   const session = createCheckItemSession(studyBank, { count: 2, seed: 3 });
 

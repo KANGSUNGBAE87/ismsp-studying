@@ -52,15 +52,20 @@ init();
 async function init() {
   renderLoading();
   try {
-    const [bankResponse, graphResponse] = await Promise.all([
+    const [bankResponse, graphResponse, criteriaSimilarityResponse] = await Promise.all([
       fetch(new URL("./data/ismsp-defect-bank.json", import.meta.url)),
       fetch(new URL("./data/wrongnote-graph.json", import.meta.url)),
+      fetch(new URL("./data/criteria-similarity.json", import.meta.url)),
     ]);
     if (!bankResponse.ok) throw new Error(`Question bank request failed: ${bankResponse.status}`);
     if (!graphResponse.ok) throw new Error(`Wrong-note graph request failed: ${graphResponse.status}`);
+    if (!criteriaSimilarityResponse.ok) {
+      throw new Error(`Criteria similarity graph request failed: ${criteriaSimilarityResponse.status}`);
+    }
     state.bank = {
       ...(await bankResponse.json()),
       wrongnoteGraph: await graphResponse.json(),
+      criteriaSimilarity: await criteriaSimilarityResponse.json(),
     };
     renderHome();
   } catch (error) {

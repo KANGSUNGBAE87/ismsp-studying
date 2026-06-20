@@ -38,3 +38,9 @@ test("binary judgment questions render their own judgment prompt instead of crit
   assert.ok(promptBody.includes('question.presentation === "judgment"'));
   assert.ok(promptBody.includes("return question.prompt"));
 });
+
+test("app loads the prebuilt criteria similarity graph with the question bank", () => {
+  assert.ok(appJsContent.includes("./data/criteria-similarity.json"));
+  assert.ok(appJsContent.includes("criteriaSimilarityResponse"));
+  assert.ok(appJsContent.includes("criteriaSimilarity: await criteriaSimilarityResponse.json()"));
+});

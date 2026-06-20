@@ -955,8 +955,12 @@ function rankedCriterionDistractors(bank, correctCode, sourceText) {
   const sourceTokens = evidenceTokenSet(sourceText);
   const correctTokens = evidenceTokenSet(criteriaScopeTokens(bank, correctCode).join(" "));
   const similarRank = new Map((bank.similarCriteriaByCode?.[correctCode] ?? []).map((code, index) => [code, index]));
+  const semanticEntries = bank.criteriaSimilarity?.similarCriteriaByCode?.[correctCode] ?? [];
+  const semanticRank = new Map(semanticEntries.map((item, index) => [item.code, index]));
+  const semanticScore = new Map(semanticEntries.map((item) => [item.code, Number(item.score ?? 0) / 100]));
+  const candidateCodes = semanticEntries.length ? semanticEntries.map((item) => item.code) : Object.keys(bank.criteria ?? {});
 
-  return Object.keys(bank.criteria ?? {})
+  return candidateCodes
     .filter((code) => code !== correctCode && getCriteria(bank, code))
     .map((code) => {
       const criteria = getCriteria(bank, code);
@@ -967,10 +971,14 @@ function rankedCriterionDistractors(bank, correctCode, sourceText) {
       const criteriaOverlap = tokenOverlapScore(correctTokens, candidateTokens);
       const graphScore = criterionGraphScore(bank, correctCode, code);
       const similarScore = similarRank.has(code) ? (20 - Math.min(similarRank.get(code), 19)) / 20 : 0;
+      const prebuiltScore = semanticScore.get(code) ?? 0;
+      const prebuiltRankScore = semanticRank.has(code) ? (24 - Math.min(semanticRank.get(code), 23)) / 24 : 0;
       const score =
         sourceOverlap * 3.4 +
         criteriaOverlap * 1.6 +
         graphScore * 0.45 +
+        prebuiltScore * 2.2 +
+        prebuiltRankScore * 0.45 +
         similarScore * 0.18 +
         (sameGroup ? 1.05 : 0) +
         (sameDomain ? 0.45 : 0);
