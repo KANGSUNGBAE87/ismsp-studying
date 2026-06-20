@@ -6,7 +6,7 @@ export const languages = [
 const messages = {
   ko: {
     appTitle: "ISMS-P 결함 판단 훈련",
-    appSubtitle: "결함사례를 보고 정답 판단문 1개 또는 오답 판단문 1개를 고르는 방식으로 훈련합니다.",
+    appSubtitle: "ISMS-P 기준과 결함사례를 짧게 반복 학습합니다.",
     sessionSize: "문항 수",
     language: "언어",
     newSession: "새 세션",
@@ -75,7 +75,7 @@ const messages = {
   },
   en: {
     appTitle: "ISMS-P Defect Judgment Drill",
-    appSubtitle: "Practice by choosing one correct or one incorrect judgment for each defect case.",
+    appSubtitle: "Practice ISMS-P criteria and defect cases in short drills.",
     sessionSize: "Questions",
     language: "Language",
     newSession: "New session",
