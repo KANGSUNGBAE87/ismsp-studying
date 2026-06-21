@@ -23,6 +23,7 @@ const INTERSTITIAL_INTERVAL_MS = 3 * 60 * 1000;
 // Ad placement ids (replace with real Apps in Toss ad group ids at release).
 const AD_PLACEMENTS = {
   wrongNoteUnlock: "wrongnote_unlock_rewarded",
+  wrongListUnlock: "wrongnote_list_rewarded",
   moreSession: "more_session_rewarded",
   homeReturn: "home_return_interstitial",
 };
@@ -161,6 +162,122 @@ function markWrongNoteBundleCompleted() {
   }
 }
 
+// --- Wrong-note full list ("광고 보고 전체목록 보기") + bookmarks ---
+
+const MODE_TITLE_KEYS = {
+  [STUDY_MODES.DEFECT_JUDGMENT_INCORRECT]: "modeDefectJudgmentIncorrect",
+  [STUDY_MODES.DEFECT_JUDGMENT_CORRECT]: "modeDefectJudgmentCorrect",
+  [STUDY_MODES.DEFECT_CRITERION]: "modeDefectCriterion",
+  [STUDY_MODES.CHECK_ITEM]: "modeCheckItem",
+};
+
+function loadBookmarks() {
+  const list = platform.storage.get("wnBookmarks", []);
+  return Array.isArray(list) ? list : [];
+}
+
+function isBookmarked(ref) {
+  const key = `${ref.mode}:${ref.sourceId}`;
+  return loadBookmarks().some((item) => `${item.mode}:${item.sourceId}` === key);
+}
+
+function toggleBookmark(key) {
+  const idx = key.indexOf(":");
+  if (idx < 0) return;
+  const ref = { mode: key.slice(0, idx), sourceId: key.slice(idx + 1) };
+  const list = loadBookmarks();
+  const existing = list.findIndex((item) => `${item.mode}:${item.sourceId}` === key);
+  if (existing >= 0) list.splice(existing, 1);
+  else list.push(ref);
+  platform.storage.set("wnBookmarks", list);
+}
+
+function resolveWrongNoteItem(bank, ref) {
+  if (!ref?.sourceId) return null;
+  if (ref.mode === STUDY_MODES.DEFECT_CRITERION) {
+    const item = (bank.defectCasePool ?? []).find((entry) => entry.id === ref.sourceId);
+    return item ? { ...ref, body: item.defectCase, code: item.criteriaCode, name: item.criteriaName } : null;
+  }
+  if (ref.mode === STUDY_MODES.CHECK_ITEM) {
+    const item = (bank.checkItemPool ?? []).find((entry) => entry.id === ref.sourceId);
+    return item ? { ...ref, body: item.question, code: item.criteriaCode, name: item.criteriaName } : null;
+  }
+  const item = (bank.truePool ?? []).find((entry) => entry.id === ref.sourceId);
+  return item ? { ...ref, body: item.defectCase, code: item.criteriaCode, name: item.criteriaName } : null;
+}
+
+async function startWrongList() {
+  const refs = loadWrongNoteRefs();
+  if (refs.length === 0) {
+    window.alert(t(state.locale, "wrongNoteEmpty"));
+    return;
+  }
+  const active = platform.storage.get("wlActive", null);
+  if (!(active && active.completed === false)) {
+    const result = await ads.showRewarded(AD_PLACEMENTS.wrongListUnlock);
+    if (!result?.rewarded) {
+      window.alert(t(state.locale, "adNotWatched"));
+      return;
+    }
+    platform.storage.set("wlActive", { completed: false });
+  }
+  state.screen = "wrong-list";
+  renderWrongList();
+}
+
+function renderWrongList() {
+  const items = loadWrongNoteRefs()
+    .map((ref) => resolveWrongNoteItem(state.bank, ref))
+    .filter(Boolean)
+    .sort((a, b) => Number(isBookmarked(b)) - Number(isBookmarked(a)));
+
+  app.innerHTML = `
+    <main class="app-shell home-shell">
+      <section class="home-panel">
+        ${renderHeader()}
+        <div class="wrong-list-head">
+          <strong>${t(state.locale, "wrongListTitle")}</strong>
+          <button class="secondary" data-action="home">${t(state.locale, "backToHome")}</button>
+        </div>
+        <div class="wrong-list">
+          ${items.length ? items.map(renderWrongListItem).join("") : `<p class="home-hint">${t(state.locale, "wrongNoteEmpty")}</p>`}
+        </div>
+      </section>
+    </main>
+  `;
+  wireWrongListEvents();
+}
+
+function renderWrongListItem(item) {
+  const key = `${item.mode}:${item.sourceId}`;
+  const marked = isBookmarked(item);
+  const tag = t(state.locale, MODE_TITLE_KEYS[item.mode] ?? "wrongNoteTitle");
+  return `
+    <article class="wrong-list-item ${marked ? "bookmarked" : ""}">
+      <button class="bookmark-toggle" data-bookmark="${escapeAttribute(key)}" aria-pressed="${marked}" title="${t(state.locale, "bookmark")}">${marked ? "★" : "☆"}</button>
+      <div class="wrong-list-body">
+        <span class="wrong-list-tag">${escapeHtml(tag)}</span>
+        <p class="wrong-list-text">${escapeHtml(item.body)}</p>
+        <p class="wrong-list-answer">${t(state.locale, "answerLabel")}: <strong>${escapeHtml(item.code)}</strong> ${escapeHtml(item.name)}</p>
+      </div>
+    </article>
+  `;
+}
+
+function wireWrongListEvents() {
+  document.querySelector('[data-action="home"]')?.addEventListener("click", async () => {
+    // Leaving the list closes the unlock: re-entering requires watching the ad again.
+    platform.storage.set("wlActive", null);
+    await goHome();
+  });
+  document.querySelectorAll("[data-bookmark]").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleBookmark(button.dataset.bookmark);
+      renderWrongList();
+    });
+  });
+}
+
 function startSession(mode, count) {
   state.mode = mode;
   state.sessionSize = normalizeSessionSize(count ?? state.sessionSize);
@@ -232,6 +349,7 @@ function renderHome() {
           ).join("")}
         </div>
         ${renderWrongNoteEntry()}
+        ${renderWrongListEntry()}
         ${renderHomeControls()}
         ${renderBankMeta()}
       </section>
@@ -250,6 +368,17 @@ function renderWrongNoteEntry() {
       </span>
       <span class="wrongnote-desc">${t(state.locale, "wrongNoteDesc")}</span>
       <span class="rewarded-pill">▶ ${t(state.locale, "watchAdToStart")}</span>
+    </button>
+  `;
+}
+
+function renderWrongListEntry() {
+  const count = loadWrongNoteRefs().length;
+  const bookmarks = loadBookmarks().length;
+  return `
+    <button class="wronglist-card" data-action="wrong-list">
+      <span class="wronglist-text">▶ ${t(state.locale, "watchAdForList")} (${count})</span>
+      ${bookmarks ? `<span class="wronglist-bookmarks">★ ${bookmarks}</span>` : ""}
     </button>
   `;
 }
@@ -300,14 +429,7 @@ function render() {
         ${renderMobileQuestionNav()}
         <h1>${escapeHtml(questionPrompt(question))}</h1>
         ${renderQuestionBody(question)}
-        <div class="options">
-          ${question.options.map((option) => renderOption(question, option, selectedIds, checked)).join("")}
-        </div>
-        ${renderStatus(question, result)}
-        ${renderReview(question, checked, selectedIds)}
-        <div class="quiz-footer-slot">
-          ${renderQuizFooter()}
-        </div>
+        ${renderQuizInteractive(question, selectedIds, checked, result)}
       </section>
     </main>
   `;
@@ -411,9 +533,83 @@ function renderQuestionBody(question) {
   `;
 }
 
+function renderQuizInteractive(question, selectedIds, checked, result) {
+  const isCriterion = question.type === "single" && question.presentation !== "judgment";
+
+  // After checking a criterion question: keep only the correct + my-pick options
+  // (with their explanations inline, right under the option) above the action
+  // buttons, and move the remaining options below the buttons.
+  if (checked && isCriterion) {
+    const explain = question.mode === STUDY_MODES.CHECK_ITEM ? explainCheckItemAnswer : explainDefectCriterionAnswer;
+    const explanation = explain(question, selectedIds[0] ?? null, state.bank);
+    const correctCode = question.options.find((option) => option.isCorrect)?.code;
+    const selectedCode = selectedIds[0] ?? null;
+    const isPrimary = (option) => option.code === correctCode || option.code === selectedCode;
+    const primary = question.options.filter(isPrimary);
+    const rest = question.options.filter((option) => !isPrimary(option));
+
+    return `
+      <div class="options">
+        ${primary
+          .map((option) => renderCriterionOption(option, selectedIds, checked, inlineExplanationFor(option, explanation)))
+          .join("")}
+      </div>
+      ${renderStatus(question, result)}
+      <div class="quiz-footer-slot">${renderQuizFooter()}</div>
+      ${
+        rest.length
+          ? `<div class="options rest-options">
+              <p class="rest-options-label">${t(state.locale, "otherOptions")}</p>
+              ${rest.map((option) => renderCriterionOption(option, selectedIds, checked, null)).join("")}
+            </div>`
+          : ""
+      }
+    `;
+  }
+
+  return `
+    <div class="options">
+      ${question.options.map((option) => renderOption(question, option, selectedIds, checked)).join("")}
+    </div>
+    ${renderStatus(question, result)}
+    ${renderReview(question, checked, selectedIds)}
+    <div class="quiz-footer-slot">${renderQuizFooter()}</div>
+  `;
+}
+
+function inlineExplanationFor(option, explanation) {
+  if (option.isCorrect) {
+    return {
+      kind: "correct",
+      title: t(state.locale, "answerExplanation"),
+      summary: explanation.isCorrect ? explanation.summary : "",
+      lines: explanation.correctExplanation?.details ?? [],
+    };
+  }
+  const distractor = (explanation.distractorExplanations ?? []).find(
+    (item) => item.code === option.code && item.isSelected,
+  );
+  return {
+    kind: "wrong",
+    title: t(state.locale, "wrongAnswerExplanations"),
+    summary: explanation.summary,
+    lines: distractor?.details ?? [],
+  };
+}
+
+function renderInlineCriterionExplanation(info) {
+  return `
+    <section class="option-explanation ${info.kind === "correct" ? "is-correct-explanation" : "is-wrong-explanation"}">
+      <strong>${escapeHtml(info.title)}</strong>
+      ${info.summary ? `<p class="${info.kind === "correct" ? "explain-correct" : "explain-wrong"}">${escapeHtml(info.summary)}</p>` : ""}
+      ${info.lines.length ? `<ul>${info.lines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>` : ""}
+    </section>
+  `;
+}
+
 function renderOption(question, option, selectedIds, checked) {
   if (question.presentation === "judgment") return renderJudgmentOption(question, option, selectedIds, checked);
-  if (question.type === "single") return renderCriterionOption(option, selectedIds, checked);
+  if (question.type === "single") return renderCriterionOption(option, selectedIds, checked, null);
   return renderJudgmentOption(question, option, selectedIds, checked);
 }
 
@@ -450,7 +646,7 @@ function renderJudgmentOption(question, option, selectedIds, checked) {
   `;
 }
 
-function renderCriterionOption(option, selectedIds, checked) {
+function renderCriterionOption(option, selectedIds, checked, explanationInfo) {
   const selected = selectedIds.includes(option.id);
   const resultBadges = renderOptionResultBadges({
     checked,
@@ -466,9 +662,10 @@ function renderCriterionOption(option, selectedIds, checked) {
   ]
     .filter(Boolean)
     .join(" ");
+  const cardClasses = ["option-card", explanationInfo ? "has-explanation" : ""].filter(Boolean).join(" ");
 
   return `
-    <article class="option-card">
+    <article class="${cardClasses}">
       <button class="${buttonClasses}" data-option="${escapeAttribute(option.id)}">
         <span class="option-label">${option.label}</span>
         <span class="option-content">
@@ -476,6 +673,7 @@ function renderCriterionOption(option, selectedIds, checked) {
           ${resultBadges}
         </span>
       </button>
+      ${explanationInfo ? renderInlineCriterionExplanation(explanationInfo) : ""}
     </article>
   `;
 }
@@ -613,6 +811,10 @@ function wireHomeEvents() {
   document.querySelector('[data-action="wrong-note"]')?.addEventListener("click", () => {
     platform.haptics.impact();
     startWrongNote();
+  });
+  document.querySelector('[data-action="wrong-list"]')?.addEventListener("click", () => {
+    platform.haptics.impact();
+    startWrongList();
   });
   wireSharedControls();
 }

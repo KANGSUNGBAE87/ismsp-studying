@@ -79,6 +79,11 @@ const messages = {
     moreViaAd: "광고 보고 더 풀기",
     adBannerLabel: "Sponsored",
     sessionDone: "이 묶음을 모두 풀었습니다. 더 풀려면 광고를 시청하세요.",
+    otherOptions: "나머지 선택지",
+    wrongListTitle: "오답 전체목록",
+    watchAdForList: "광고 보고 전체목록 보기",
+    bookmark: "북마크",
+    answerLabel: "정답",
   },
 };
 

@@ -929,3 +929,138 @@ body {
   color: #fff;
   background: var(--accent);
 }
+
+/* --- Checked criterion layout: inline explanations + rest below buttons --- */
+.option-explanation.is-correct-explanation {
+  border-left: 3px solid var(--success);
+}
+
+.option-explanation.is-wrong-explanation {
+  border-left: 3px solid var(--danger);
+}
+
+.option-explanation.is-correct-explanation > strong,
+.option-explanation.is-wrong-explanation > strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.rest-options {
+  margin-top: 16px;
+}
+
+.rest-options-label {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.rest-options .option-card {
+  opacity: 0.7;
+}
+
+/* --- Wrong-note full list + bookmarks --- */
+.wronglist-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--accent);
+  background: transparent;
+  color: var(--primary-strong);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.wronglist-card:hover {
+  background: rgba(217, 140, 40, 0.06);
+}
+
+.wronglist-bookmarks {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.wrong-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wrong-list-head strong {
+  font-size: 1.05rem;
+  color: var(--primary-strong);
+}
+
+.wrong-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wrong-list-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.wrong-list-item.bookmarked {
+  border-color: var(--accent);
+  background: rgba(217, 140, 40, 0.06);
+}
+
+.bookmark-toggle {
+  flex: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.wrong-list-body {
+  min-width: 0;
+}
+
+.wrong-list-tag {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-strong);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.wrong-list-text {
+  margin: 4px 0;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.wrong-list-answer {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.wrong-list-answer strong {
+  color: var(--primary-strong);
+}
