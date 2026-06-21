@@ -1,0 +1,771 @@
+[
+  {
+    "index": 0,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "정책대로 매 분기 경영진 보고·의사결정이 정상 이행되면 1.1.1 경영진 참여 통제가 성공한 것이므로 결함이 아니다. '결함에 해당한다'는 명백히 거짓. 극성 반전(B7) 일치."
+  },
+  {
+    "index": 1,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "경영진 사전 승인하에 보고 주기를 1회 조정한 것은 보고·의사결정 체계 내의 정당한 운영이다. 의사결정권자가 의식적으로 조정·기록했다면 1.1.1 결함이 사라지므로 '결함'은 거짓. B6 면책 일치."
+  },
+  {
+    "index": 2,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B1",
+    "difficulty": 2,
+    "reason": "정책 주기(반기)보다 더 자주(분기) 보고하면 경영진 참여 체계가 정상 운영된 것이므로 결함이 아니다. 주기 함정(B1) 일치, 명백히 거짓."
+  },
+  {
+    "index": 3,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "위임자 참여+증거자료가 모두 확보되면 1.1.1 경영진 참여 요구사항이 충족된다. 요구사항이 '경영진 또는 위임받은 자'를 허용하므로 결함이 아니다. B7 극성 반전 일치."
+  },
+  {
+    "index": 4,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "사전 권한 위임자가 적법 참여·승인했다면 요구사항이 허용하는 방식이므로 결함이 아니다. '위임받은 자 참여'를 면책 사유로 활용한 B6 일치. 정답 코드 정의와 정합."
+  },
+  {
+    "index": 5,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 경영진 의사결정 참여 부재(1.1.1)인데 외주 보안서약서 누락(인적보안 2.x)으로 사유를 바꿔쳤다. 1.1.1로 매핑 불가하므로 거짓. 사유 바꿔치기(B10) 일치, 그럴듯해 난이도 높음."
+  },
+  {
+    "index": 6,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "의무대상자가 임원급 CISO 지정+기한 내 신고를 모두 이행했으면 1.1.2 요구사항 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 7,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "신고 의무 대상이 아닌 소규모 사업자는 미신고가 법적 결함이 아니고 자율 지정까지 했으므로 결함이 아니다. 적용 대상 함정(B2) 일치. 의무대상 여부가 핵심이라 헷갈리기 쉬워 난이도 높음."
+  },
+  {
+    "index": 8,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 CISO 지정·신고 의무 미이행(1.1.2)인데 개인정보 흐름도 미현행화(1.2.2)로 사유를 바꿔쳤다. 1.1.2 근거로 성립하지 않으므로 거짓. B10 일치."
+  },
+  {
+    "index": 9,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "실질 권한+임원급 지위 보유자를 개인정보 보호책임자로 지정하면 1.1.2 적격자 지정 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 10,
+    "verdict": "revise",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "실질 권한 부족자를 '임시 지정'한 점이 남아 위임 규정만으로 결함이 완전히 해소되었다고 단정하기 모호하다. 거짓 방향은 맞으나 경계가 흐려 더 명확히 '권한 위임 규정으로 실질적 총괄 책임이 가능해진' 상태로 다듬는 것이 안전.",
+    "revisedStatement": "실질적 권한이 부족했던 인원을 개인정보 보호책임자로 지정하였으나, 경영진 승인하에 명문 권한 위임 규정을 마련하여 해당 인원이 개인정보 처리 업무를 실질적으로 총괄·책임질 수 있게 된 경우 결함에 해당한다."
+  },
+  {
+    "index": 11,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 실질 권한·지위 부재로 인한 총괄 책임 불가(1.1.2)인데 교육 미이수로 사유를 바꿔쳤다. 교육 미이수는 2.2.x 사안이라 1.1.2 근거로 부적합. 거짓. B10 일치."
+  },
+  {
+    "index": 12,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "조직도 명시+인사발령 등 공식 지정절차까지 완료하면 1.1.2 지정 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 13,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 4,
+    "reason": "인사발령은 예시 수단이며, 대표이사 승인 정식 지정 공문으로 공식 지정이 입증되면 적절한 대체수단이므로 결함이 아니다. 대체수단(B8) 일치. 경계가 미묘해 난이도 높음."
+  },
+  {
+    "index": 14,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 공식 지정절차 부재(1.1.2)인데 일부 부서 미공유로 사유를 바꿔쳤다. 공유는 1.1.5 영역이라 1.1.2 근거로 부적합. 거짓. B10 일치."
+  },
+  {
+    "index": 15,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 3,
+    "reason": "겸직 제한 대상(자산 5천억 초과)이 CISO를 겸직 없이 전담시킨 것은 정통망법 겸직 제한 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 16,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "겸직 제한은 자산 5천억 초과 등 일정 규모 이상에 적용된다. 미달 사업자는 CIO 겸직이 허용되어 결함이 아니다. 적용 대상 함정(B2) 일치. 규모 판단이 까다로워 난이도 높음."
+  },
+  {
+    "index": 17,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 겸직 제한 위반(1.1.2)인데 보안 예산 감소(1.1.6)로 사유를 바꿔쳤다. 1.1.2 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 18,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "임원 등 경영진을 포함해 중요 사항을 의결·결정할 수 있게 위원회를 구성하면 1.1.3 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 19,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "임원급 경영진+실무 부서장을 함께 구성하면 경영진 포함 의결권 요건을 충족하므로 결함이 아니다. '더 강화된' 수식이 붙은 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 20,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 경영진 부재로 의결권 결여(1.1.3)인데 회의록 보관 기한으로 사유를 바꿔쳤다. 보관 기한 자체는 1.1.3 핵심이 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 21,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "협의체가 정기 회의로 운영 실적을 지속 남기면 1.1.3 협의체 운영 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 22,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "경영진 승인하에 정기회의를 수시회의로 대체하고 실적을 남겼다면 협의체 활동이 유지된 것이므로 결함이 아니다. B6 면책 일치, 거짓."
+  },
+  {
+    "index": 23,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B1",
+    "difficulty": 2,
+    "reason": "정한 주기(반기)보다 더 자주(분기) 협의체를 운영하면 요구 충족이므로 결함이 아니다. 주기 함정(B1) 일치, 명백히 거짓."
+  },
+  {
+    "index": 24,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "위원회가 연간 계획·교육·예산·인력 등 주요 사항을 모두 검토·의결하면 1.1.3 운영 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 25,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "주요 사항을 검토했고 일부 안건만 경영진 승인하에 차기 이월 의결한 것은 정상 의사결정 절차이므로 결함이 아니다. B6 면책 일치, 거짓."
+  },
+  {
+    "index": 26,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 주요 사항 미의결(1.1.3)인데 외부 컨설턴트 미참여로 사유를 바꿔쳤다. 컨설턴트 참여는 요구사항이 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 27,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "개인정보보호 조직도 위원회에 참여해 관련 사항을 의결할 수 있으면 1.1.3 구성 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 28,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 4,
+    "reason": "개인정보 안건마다 보호책임자를 의결권 위원으로 참석시켜 결정해 왔다면 개인정보 사항을 실질적으로 결정할 수 있으므로 적절한 대체 운영이고 결함이 아니다. 대체수단(B8) 일치, 난이도 높음."
+  },
+  {
+    "index": 29,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 개인정보보호 조직 부재로 의결권 결여(1.1.3)인데 개최 주기 미증설로 사유를 바꿔쳤다. 주기 증설은 요구사항이 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 30,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "개발·시험 시스템, 외주직원, PC, 테스트 단말기를 모두 식별해 범위에 포함하면 1.1.4 범위 설정 요구를 충족하므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 31,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "핵심 서비스·개인정보와 무관한 폐쇄망 동호회 시스템은 범위 설정 시 정당하게 제외 가능하므로 결함이 아니다. 적용 대상/범위 함정(B2) 일치. 원 결함의 '개발업무' 자산과 달리 비핵심으로 바꾼 것이 핵심이라 난이도 높음."
+  },
+  {
+    "index": 32,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 4,
+    "reason": "원 결함 핵심은 개발 자산 범위 누락(1.1.4)인데 외주직원 보안서약서 미징구(인적보안)로 사유를 바꿔쳤다. 1.1.4 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 33,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "중요 의사결정자 임직원·사업부서 등 핵심 조직을 모두 인증범위에 포함하면 1.1.4 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 34,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 핵심 조직 범위 누락(1.1.4)인데 범위 문서 게시판 미공유(1.1.5)로 사유를 바꿔쳤다. 1.1.4 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 35,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 4,
+    "reason": "핵심 의사결정 업무를 범위 내 부서로 전부 이관해 실질적으로 포함시켰다면 범위 누락이 해소된다. 경영진 승인 정황까지 더해 1.1.4 결함이 사라지므로 거짓. B6 면책 일치, 난이도 높음."
+  },
+  {
+    "index": 36,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "개발·시험 시스템, 개발자 PC, 테스트 단말기, 개발조직을 빠짐없이 식별·반영하면 1.1.4 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 37,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 4,
+    "reason": "개발업무 전체가 인증범위 외 독립 법인으로 분리되어 조직의 처리 대상이 아니게 되면 범위 설정 대상 자체가 아니므로 누락 결함이 성립하지 않는다. B6/범위 면책 일치, 거짓. 난이도 높음."
+  },
+  {
+    "index": 38,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 개발 자산 범위 누락(1.1.4)인데 개발자 PC 백신 미설치(보호대책)로 사유를 바꿔쳤다. 1.1.4 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 39,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "규정대로 위원회 안건 상정·의결을 거쳐 정책서를 개정하면 1.1.5 정책 승인 절차를 준수한 것이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 40,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 4,
+    "reason": "규정이 경미 변경을 책임자 승인으로 명시적 위임했고 그에 따라 처리했다면 정해진 절차를 준수한 것이므로 결함이 아니다. 대체/위임 절차(B8) 일치. 위임 명시 여부가 핵심이라 난이도 높음."
+  },
+  {
+    "index": 41,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 규정상 위원회 의결 절차 미준수(1.1.5)인데 개정 정책서 미교육으로 사유를 바꿔쳤다. 1.1.5 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 42,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "개정 사항이 전 임직원에 공유·전달되어 모두 최신 버전으로 업무하면 1.1.5 전달 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 43,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 3,
+    "reason": "게시판 대신 설명회·메신저 전체 공지로 전 임직원에 실제 전달되어 최신 적용됐다면 전달 수단은 자유이므로 결함이 아니다. 대체수단(B8) 일치, 거짓."
+  },
+  {
+    "index": 44,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 개정 사항 미전달로 구버전 사용(1.1.5)인데 위원회 의결 미이행으로 사유를 바꿔쳤다. 1.1.5 전달 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 45,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "게시판·문서 시스템으로 전 임직원이 상시 열람 가능하게 제공하면 1.1.5 열람 제공 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 46,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 3,
+    "reason": "게시판 대신 문서관리시스템으로 임직원 누구나 열람 가능하면 제공 수단은 예시일 뿐이므로 결함이 아니다. 대체수단(B8) 일치, 거짓."
+  },
+  {
+    "index": 47,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 임직원 열람 제공 부재(1.1.5)인데 임원 승인 미이행으로 사유를 바꿔쳤다. 1.1.5 열람 제공 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 48,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "분야별 전문성 있는 인력을 확보해 보안조직을 구성하면 1.1.6 자원(인력) 할당 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 49,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 4,
+    "reason": "외부 전문업체 위탁·전문 컨설턴트 상시 자문으로 분야별 전문성을 확보했다면 자원 할당 취지를 충족하는 적절한 수단이므로 결함이 아니다. 대체수단(B8) 일치, 난이도 높음."
+  },
+  {
+    "index": 50,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B9",
+    "difficulty": 4,
+    "reason": "1.1.6 자원 할당 결함의 핵심은 전문성 부재이지 인력 과다가 아니다. 인력을 충분히 배치한 것을 결함 사유로 드는 것은 자기모순이라 거짓. 자기모순(B9) 일치, 그럴듯해 난이도 높음."
+  },
+  {
+    "index": 51,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "최고경영자가 보호조치 예산을 충분히 지원하면 1.1.6 자원 할당 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 52,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "최고경영자가 차년도 우선 편성을 승인하고 그 사이 대체 통제로 공백을 메웠다면 자원 할당 책임이 이행된 것이므로 결함으로 보기 어렵다. B6 면책 일치, 거짓."
+  },
+  {
+    "index": 53,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 최고경영자의 예산·자원 미지원(1.1.6)인데 위험평가 미선행(1.2.3)으로 사유를 바꿔쳤다. 1.1.6 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 54,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "인증 이후에도 인력·예산을 안정적으로 유지·지원하면 1.1.6 지속 운영 자원 할당 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 55,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 4,
+    "reason": "인력 재배치를 하되 자동화 솔루션·외부 위탁으로 동일 보호 수준을 유지하고 경영진 승인하에 효율화했다면 자원 할당이 이행된 것이므로 결함이 아니다. 대체수단(B8) 일치, 난이도 높음."
+  },
+  {
+    "index": 56,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 인증 후 자원 지원 축소(1.1.6)인데 솔루션 보안 패치 미적용(보호대책)으로 사유를 바꿔쳤다. 1.1.6 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 57,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "유출통제 시스템을 모두 식별·등재하면 1.2.1 정보자산 식별 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 58,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 자산 식별 목록 누락(1.2.1)인데 USB제어 정책 미적용(보호대책 운영)으로 사유를 바꿔쳤다. 식별과 운영은 다른 통제라 1.2.1 근거로 부적합, 거짓. B10 일치."
+  },
+  {
+    "index": 59,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "식별 대상은 관리체계 범위 내 자산이다. 인증범위 밖 별도 망 전용 자산의 미등재는 정당한 범위 설정이므로 결함이 아니다. 범위 함정(B2) 일치, 난이도 높음."
+  },
+  {
+    "index": 60,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "제3자 제공 개인정보를 자산으로 식별·분류해 목록에 반영하면 1.2.1 식별 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 61,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "통계 목적 완전 익명정보는 개인정보가 아니므로 개인정보 자산으로 식별할 의무가 없어 결함이 아니다. 적용 대상 함정(B2) 일치. 익명/가명 구분이 까다로워 난이도 높음."
+  },
+  {
+    "index": 62,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 자산 식별 누락(1.2.1)인데 제3자 제공 동의 미확인(3.x 수집·이용)으로 사유를 바꿔쳤다. 1.2.1 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 63,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "지침과 대장의 분류 기준이 일치하게 일관 관리되면 1.2.1 자산 분류 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 64,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "지침 개정 직후 경영진 승인하에 대장을 전수 재분류해 기준을 일치시켰다면 불일치가 해소되어 결함이 아니다. B6 면책/정정 일치, 거짓."
+  },
+  {
+    "index": 65,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 지침·대장 분류 기준 불일치(1.2.1)인데 대장 갱신 주기로 사유를 바꿔쳤다. 매주 갱신 의무는 없고 1.2.1 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 66,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "위탁 IT 서비스까지 인증범위 내 자산으로 식별·반영하면 1.2.1 식별 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 명백히 거짓."
+  },
+  {
+    "index": 67,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "식별 대상은 인증범위 내 자산이다. 범위 밖 비핵심 위탁 서비스의 미식별은 정당하므로 결함이 아니다. 범위 함정(B2) 일치. 원 결함이 '단, 인증범위 내'였던 것과 대비돼 난이도 높음."
+  },
+  {
+    "index": 68,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 위탁 자산 식별 누락(1.2.1)인데 위탁계약서 보안 요구사항 미명시(외부자 보안)로 사유를 바꿔쳤다. 1.2.1 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 69,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "개인정보 저장 자산의 기밀성을 합리적으로 (상)으로 산정하면 1.2.1 중요도 평가 신뢰성 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 70,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "잘못된 (하) 등급을 경영진 승인하에 (상)으로 재산정·정정했다면 중요도 평가 신뢰성이 확보되므로 결함이 아니다. B6 정정/면책 일치, 거짓."
+  },
+  {
+    "index": 71,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 중요도 평가 합리성 미흡(1.2.1)인데 백업 주기 부족(2.9.x 백업관리)으로 사유를 바꿔쳤다. 1.2.1 근거로 부적합하므로 거짓. B10 일치."
+  },
+  {
+    "index": 72,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "업무 절차·흐름·현황을 분석·문서화하고 유지·관리하면 1.2.2 현황 및 흐름분석 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 73,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 3,
+    "reason": "별도 흐름도 대신 매뉴얼·구성도·단계별 설명 자료를 결합해 누락 없이 문서화했다면 문서 형식은 자유이므로 1.2.2 요구 충족, 결함이 아니다. 대체수단(B8) 일치, 거짓."
+  },
+  {
+    "index": 74,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 현황·흐름 문서화 부재(1.2.2)인데 문서 작성 담당자 임원급 미지정으로 사유를 바꿔쳤다. 담당자 직급은 요구사항이 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 75,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "흐름도를 실제 흐름과 일치하게 누락 없이 반영·관리하면 1.2.2 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 76,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "상이 부분을 정기 흐름분석 시 경영진 승인하에 전수 재검증·갱신해 실제와 일치시켰다면 최신성이 확보되므로 결함이 아니다. B6 정정/면책 일치, 거짓."
+  },
+  {
+    "index": 77,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 흐름도의 부정확성·누락(1.2.2)인데 외부 컨설팅 업체 작성으로 사유를 바꿔쳤다. 작성 주체는 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 78,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "흐름 변화 시마다 현행화해 반영하면 1.2.2 최신성 유지 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 79,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 4,
+    "reason": "정기 현행화는 안 했어도 해당 기간 처리 절차·시스템·수탁사 변경이 전혀 없어 흐름도가 실제와 계속 일치하면 최신성이 유지된 것이므로 결함으로 보기 어렵다. 변경 부재 면책 정황이라 B6에 가까움. 난이도 높음."
+  },
+  {
+    "index": 80,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B1",
+    "difficulty": 3,
+    "reason": "요구사항은 주기적 검토로 최신성 유지일 뿐 1주 갱신 의무는 없다. 핵심은 변경 미반영이지 1주 주기가 아니므로 거짓. 주기 함정(B1) 일치."
+  },
+  {
+    "index": 81,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "위험관리계획서에 기간·대상·방법+수행 인력·소요 예산 등 실행계획까지 모두 포함하면 1.2.3 위험평가 준비 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 82,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B8",
+    "difficulty": 3,
+    "reason": "수행 인력·예산을 별첨 자원운영계획서에 상세 기재해 계획에 포함시켰다면 위험관리계획의 완결성이 확보되므로 결함이 아니다. 대체수단/문서 형식(B8) 일치, 거짓."
+  },
+  {
+    "index": 83,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 위험관리계획의 실행계획 누락(1.2.3)인데 위험평가 결과 경영진 미승인으로 사유를 바꿔쳤다(다른 1.2.3 사례의 핵심). 본 사례의 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 84,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "자산 변경 여부와 무관하게 연 1회 위험평가를 정상 수행하면 1.2.3 주기 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 85,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B5",
+    "difficulty": 4,
+    "reason": "연 1회 위험평가가 실제 수행되었고 자산 변경이 없어 변경분 위주로 합리적으로 간소화한 것은 주기 요구를 충족하므로 결함으로 보기 어렵다. 정도/범위 간소화(B5) 일치. 간소화가 결함처럼 보여 난이도 높음."
+  },
+  {
+    "index": 86,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 금년도 연 1회 위험평가 미수행(1.2.3)인데 전년도 평가 방법이 정성적이었던 점으로 사유를 바꿔쳤다. 정성/정량은 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 87,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "중요 정보자산+법적 요구사항 위험까지 모두 식별·평가하면 1.2.3 위험평가 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 88,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B2",
+    "difficulty": 4,
+    "reason": "중요 정보자산은 평가했고 비핵심 일부만 경영진 승인하에 다음 차수로 미뤘다면 원 결함(중요 자산 미평가) 요건을 충족하지 못하므로 결함이 아니다. 적용 대상/범위 함정(B2) 일치, 난이도 높음."
+  },
+  {
+    "index": 89,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 중요 자산·법적 위험 식별·평가 누락(1.2.3)인데 위험평가 보고서 미공유로 사유를 바꿔쳤다. 보고서 공유는 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 90,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "목표 위험수준을 경영진에 보고해 정식 승인받으면 1.2.3 수용 위험 승인 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 91,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B4",
+    "difficulty": 3,
+    "reason": "정기 보고 일정 전이라도 정보보호 최고책임자(경영진)에게 사전 보고해 서면 승인을 받았다면 수용 위험 승인 요구를 충족하므로 결함이 아니다. 시점 함정(B4) 일치, 거짓."
+  },
+  {
+    "index": 92,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B10",
+    "difficulty": 3,
+    "reason": "원 결함 핵심은 수용 위험에 대한 경영진 승인 미이행(1.2.3)인데 외부 컨설턴트 미참여로 사유를 바꿔쳤다. 컨설턴트 참여는 결함 근거가 아니므로 거짓. B10 일치."
+  },
+  {
+    "index": 93,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B7",
+    "difficulty": 2,
+    "reason": "지침에 정한 방법과 실제 수행 방법이 일치하게 평가하면 1.2.3 요구 충족이므로 결함이 아니다. 극성 반전(B7) 일치, 거짓."
+  },
+  {
+    "index": 94,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B6",
+    "difficulty": 3,
+    "reason": "평가 착수 전 경영진 승인하에 더 정교한 방법으로 지침을 개정하고 그 방법대로 수행했다면 지침과 실제가 일치하므로 결함이 아니다. B6 정당화/정정 일치, 거짓."
+  },
+  {
+    "index": 95,
+    "verdict": "keep",
+    "isGenuinelyWrong": true,
+    "correctedTrapAxis": "B1",
+    "difficulty": 3,
+    "reason": "요구사항은 연 1회 이상이므로 연 1회 수행은 적법하다. 핵심은 방법 불일치이지 주기가 아니므로 거짓. 주기 함정(B1) 일치."
+  }
+]
