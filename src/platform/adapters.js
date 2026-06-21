@@ -33,19 +33,32 @@ export function createBrowserPlatform() {
 }
 
 // Ads adapter. Keeps Apps in Toss / Google Play SDK calls out of product logic.
-// Reward semantics follow the global rule learned from the rewarded-ad bugfix:
-// - reward completion is granted ONLY on the `userEarnedReward` event
-//   (never on close/dismiss/network packets),
-// - `dismissed` waits a short grace window because userEarnedReward can arrive late,
+// Real ads use @apps-in-toss/web-framework:
+//   showFullScreenAd({ options:{adGroupId}, onEvent, onError })  // interstitial + rewarded
+//   TossAds.initialize() + TossAds.attachBanner(adGroupId, target, opts)  // banner
+// Reward semantics follow the global rewarded-ad rule:
+// - reward is granted ONLY on the `userEarnedReward` event (never close/dismiss),
+// - `dismissed` waits a short grace window (userEarnedReward can arrive late),
 // - the caller persists the unlock by id so reopening does not re-lock it.
 const REWARD_GRACE_MS = 500;
 
-export function createAdsAdapter(options = {}) {
-  const bridge = options.bridge ?? (typeof globalThis !== "undefined" ? globalThis.AppsInToss : null);
+// Loaded only when bundled by `ait build`. In the plain static/web preview the
+// bare specifier fails to resolve, so we fall back to a confirm()-based stub.
+let aitModulePromise;
+function loadAitModule(override) {
+  if (override !== undefined) return Promise.resolve(override);
+  if (!aitModulePromise) {
+    aitModulePromise = import("@apps-in-toss/web-framework").catch(() => null);
+  }
+  return aitModulePromise;
+}
 
-  function showFullScreen(placementId, { rewarded }) {
-    // Real Apps in Toss path.
-    if (bridge && typeof bridge.showFullScreenAd === "function") {
+export function createAdsAdapter(options = {}) {
+  const getModule = () => loadAitModule(options.module);
+
+  async function showFullScreen(placementId, { rewarded }) {
+    const sdk = await getModule();
+    if (sdk && typeof sdk.showFullScreenAd === "function") {
       return new Promise((resolve) => {
         let earned = false;
         let settled = false;
@@ -55,19 +68,17 @@ export function createAdsAdapter(options = {}) {
           resolve(value);
         };
         try {
-          bridge.showFullScreenAd({
-            adGroupId: placementId,
+          sdk.showFullScreenAd({
+            options: { adGroupId: placementId },
             onEvent: (event) => {
-              const type = event?.type ?? event?.event;
-              if (type === "userEarnedReward" || event?.rewarded === true) {
-                earned = true; // reward is confirmed here and ONLY here
-              } else if (type === "dismissed" || type === "closed") {
+              if (event?.type === "userEarnedReward") {
+                earned = true; // reward confirmed here and ONLY here
+              } else if (event?.type === "dismissed" || event?.type === "closed") {
                 // grace window: userEarnedReward may still be in flight
                 setTimeout(() => finish({ rewarded: rewarded ? earned : false, dismissed: true }), REWARD_GRACE_MS);
-              } else if (type === "error" || type === "failed" || type === "loadFailed") {
-                finish({ rewarded: false, error: true });
               }
             },
+            onError: () => finish({ rewarded: false, error: true }),
           });
         } catch {
           finish({ rewarded: false, error: true });
@@ -75,21 +86,18 @@ export function createAdsAdapter(options = {}) {
       });
     }
 
-    // Web / static-preview stub: no SDK available. Simulate a watch so the flow
-    // is testable. A cancel = no reward (mirrors not finishing the ad).
+    // Web / static-preview stub: simulate a watch so the flow is testable.
     const canConfirm = typeof window !== "undefined" && typeof window.confirm === "function";
     const watched = rewarded
       ? (canConfirm ? window.confirm(options.stubRewardPrompt ?? "[광고 시뮬레이션] 리워드 광고를 끝까지 시청하시겠습니까?\n확인 = 시청 완료(보상 지급), 취소 = 미시청") : true)
-      : (canConfirm ? (window.confirm(options.stubInterstitialPrompt ?? "[광고 시뮬레이션] 전면 광고"), true) : true);
-    return Promise.resolve({ rewarded: rewarded ? Boolean(watched) : false, dismissed: true, stub: true });
+      : true;
+    return { rewarded: rewarded ? Boolean(watched) : false, dismissed: true, stub: true };
   }
 
   return {
-    isAvailable() {
-      return Boolean(bridge);
+    async isAvailable() {
+      return Boolean(await getModule());
     },
-    // Banner is a fixed-area placement; web stub just reports support so the UI
-    // can render a reserved slot. Real banner is mounted by the host shell.
     bannerSupported() {
       return true;
     },
@@ -98,6 +106,24 @@ export function createAdsAdapter(options = {}) {
     },
     async showInterstitial(placementId) {
       await showFullScreen(placementId, { rewarded: false });
+    },
+    // Real Apps in Toss banner via TossAds; returns null in the web stub so the
+    // app shell can render its own placeholder slot instead.
+    async mountBanner(placementId, target) {
+      const sdk = await getModule();
+      if (sdk && sdk.TossAds && typeof sdk.TossAds.attachBanner === "function") {
+        try {
+          sdk.TossAds.initialize();
+          return sdk.TossAds.attachBanner(placementId, target, {
+            theme: "auto",
+            tone: "blackAndWhite",
+            variant: "expanded",
+          });
+        } catch {
+          return null;
+        }
+      }
+      return null;
     },
   };
 }

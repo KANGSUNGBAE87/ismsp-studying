@@ -848,9 +848,9 @@ select {
   }
 }
 
-/* --- Ad banner (fixed bottom, all screens) --- */
+/* --- Ad banner (fixed bottom, all screens) + Safe Area --- */
 body {
-  padding-bottom: 60px;
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
 .ad-banner {
@@ -858,7 +858,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 52px;
+  min-height: 52px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex;
   align-items: center;
   justify-content: center;

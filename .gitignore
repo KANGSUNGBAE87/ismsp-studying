@@ -14,6 +14,7 @@ tmp/
 
 # Private/generated analysis outputs; keep curated runtime data under public/data instead.
 dist/
+*.ait
 ai/analysis/*-ocr-pages.jsonl
 ai/analysis/*-page-index.json
 ai/analysis/*question-bank.json

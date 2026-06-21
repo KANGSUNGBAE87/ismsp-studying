@@ -21,11 +21,14 @@ const NEW_SESSION_LIMIT = 2;
 const INTERSTITIAL_INTERVAL_MS = 3 * 60 * 1000;
 
 // Ad placement ids (replace with real Apps in Toss ad group ids at release).
+// Apps in Toss test ad ids (development). Replace with real ad group ids issued
+// from the console at release — inject via build env, never hard-code prod ids.
 const AD_PLACEMENTS = {
-  wrongNoteUnlock: "wrongnote_unlock_rewarded",
-  wrongListUnlock: "wrongnote_list_rewarded",
-  moreSession: "more_session_rewarded",
-  homeReturn: "home_return_interstitial",
+  wrongNoteUnlock: "ait-ad-test-rewarded-id",
+  wrongListUnlock: "ait-ad-test-rewarded-id",
+  moreSession: "ait-ad-test-rewarded-id",
+  homeReturn: "ait-ad-test-interstitial-id",
+  banner: "ait-ad-test-banner-id",
 };
 
 const state = {
@@ -91,11 +94,15 @@ async function init() {
 
 // --- Ads: banner (all screens), interstitial (home return), rewarded (wrong note / more) ---
 
-function mountBanner() {
+async function mountBanner() {
   const slot = document.querySelector("#ad-banner");
-  if (!slot || !ads.bannerSupported()) return;
-  slot.innerHTML = `<span class="ad-banner-label">${t(state.locale, "adBannerLabel")}</span>`;
+  if (!slot) return;
   slot.hidden = false;
+  const attached = await ads.mountBanner(AD_PLACEMENTS.banner, slot);
+  if (!attached) {
+    // Web/preview fallback: placeholder slot (real banner mounts in Apps in Toss).
+    slot.innerHTML = `<span class="ad-banner-label">${t(state.locale, "adBannerLabel")}</span>`;
+  }
 }
 
 function maybeShowInterstitial() {
