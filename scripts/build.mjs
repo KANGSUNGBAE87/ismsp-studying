@@ -5,6 +5,7 @@ const root = resolve('.');
 const dist = join(root, 'dist');
 const entries = [
   'index.html',
+  'terms.html',
   'public/app.js',
   'public/styles.css',
   'public/data/ismsp-defect-bank.json',
