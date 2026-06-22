@@ -18,7 +18,6 @@ const platform = createBrowserPlatform();
 const ads = createAdsAdapter();
 const SESSION_SIZE_OPTIONS = [DEFAULT_SESSION_COUNT];
 const NEW_SESSION_LIMIT = 2;
-const INTERSTITIAL_INTERVAL_MS = 3 * 60 * 1000;
 
 // Ad placement ids (replace with real Apps in Toss ad group ids at release).
 // Apps in Toss test ad ids (development). Replace with real ad group ids issued
@@ -27,7 +26,6 @@ const AD_PLACEMENTS = {
   wrongNoteUnlock: "ait-ad-test-rewarded-id",
   wrongListUnlock: "ait-ad-test-rewarded-id",
   moreSession: "ait-ad-test-rewarded-id",
-  homeReturn: "ait-ad-test-interstitial-id",
   banner: "ait-ad-test-banner-id",
 };
 
@@ -103,13 +101,6 @@ async function mountBanner() {
     // Web/preview fallback: placeholder slot (real banner mounts in Apps in Toss).
     slot.innerHTML = `<span class="ad-banner-label">${t(state.locale, "adBannerLabel")}</span>`;
   }
-}
-
-function maybeShowInterstitial() {
-  const last = Number(platform.storage.get("lastInterstitialAt", 0));
-  if (Date.now() - last < INTERSTITIAL_INTERVAL_MS) return Promise.resolve();
-  platform.storage.set("lastInterstitialAt", Date.now());
-  return ads.showInterstitial(AD_PLACEMENTS.homeReturn);
 }
 
 // --- Wrong note ("취약기준 문제모음집") storage + session ---
@@ -301,8 +292,7 @@ function startSession(mode, count) {
   render();
 }
 
-async function goHome() {
-  await maybeShowInterstitial();
+function goHome() {
   state.screen = "home";
   renderHome();
 }
